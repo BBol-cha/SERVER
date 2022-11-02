@@ -2,7 +2,6 @@ package project.BBolCha.domain.user.Dto;
 
 import lombok.Builder;
 import lombok.Data;
-import project.BBolCha.domain.user.Entity.User;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
