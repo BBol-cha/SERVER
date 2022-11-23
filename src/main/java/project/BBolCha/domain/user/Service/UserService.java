@@ -172,7 +172,7 @@ public class UserService {
     }
 
     public ResponseEntity<String> version() {
-        String version = "version 0.0.3";
+        String version = "version 0.0.4";
         return new ResponseEntity<>(version,HttpStatus.OK);
     }
 }
