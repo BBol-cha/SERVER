@@ -28,12 +28,34 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        
     - uses : actions/checkout@v3
     - run : touch ./src/main/resources/application.properties
     - run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
     - run : cat ./src/main/resources/application.properties
     
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: build
+      run: ./gradlew clean build
+    
+    - name : Make Directory for deliver
+      run : mkdir deploy
+    
+    - name : Copy Jar
+      run : cp ./build/libs/*.jar ./deploy/
+      
+    - name : Make zip file
+      run : zip -r -qq -j ./springboot-intro-build.zip ./deploy
+      
+    - name : Deliver to AWS S3
+      env : 
+        AWS_ACCESS_KEY_ID : ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KET : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run : |
+        aws s3 cp \
+        --region ap-northeast-2 \
+        --acl private \
+    ./springboot-intro-build.zip s3: //springboot-intro-build/
+        
