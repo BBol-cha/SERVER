@@ -19,7 +19,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
     private final RedisDao redisDao;
-
     private final TokenProvider tokenProvider;
 
     public JwtFilter(TokenProvider tokenProvider, RedisDao redisDao) {
