@@ -170,4 +170,9 @@ public class UserService {
         ));
         return new ResponseEntity<>(LOGOUT_TRUE, HttpStatus.OK);
     }
+
+    public ResponseEntity<String> version() {
+        String version = "version 0.0.1";
+        return new ResponseEntity<>(version,HttpStatus.OK);
+    }
 }

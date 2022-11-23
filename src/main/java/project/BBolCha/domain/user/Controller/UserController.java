@@ -14,6 +14,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("version")
+    public ResponseEntity<String> version(){
+        return userService.version();
+    }
+
     // 로그인
     @PostMapping("login")
     public ResponseEntity<UserDto.loginResponse> login(
