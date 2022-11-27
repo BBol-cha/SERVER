@@ -2,7 +2,7 @@
 
 #!/bin/bash
 
-PROJECT_ROOT="/home/ec2-user/app/deploy"
+PROJECT_ROOT="/home/ec2-user/bbolcha-back"
 JAR_FILE="$PROJECT_ROOT/build/libs/BBolCha-0.0.1-SNAPSHOT.jar"
 
 CURRENT_PORT=$(cat /home/ec2-user/service_url.inc | grep -Po '[0-9]+' | tail -1)

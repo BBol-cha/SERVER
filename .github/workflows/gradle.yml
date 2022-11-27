@@ -60,7 +60,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         aws deploy create-deployment \
-        --application-name springboot-intro \
+        --application-name bbolcha-application \
         --deployment-group-name bbolcha \
         --file-exists-behavior OVERWRITE \
         --s3-location bucket=bbolchadeploy,bundleType=zip,key=springboot-intro-build.zip \
