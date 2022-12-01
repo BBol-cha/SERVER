@@ -14,22 +14,10 @@ public class CorsConfig {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       CorsConfiguration config = new CorsConfiguration();
       config.setAllowCredentials(true);
-      //
-      config.addAllowedOrigin("http://localhost:8080");
-      config.addAllowedOrigin("http://localhost:8080/");
-      config.addAllowedOrigin("http://ec2-3-36-86-19.ap-northeast-2.compute.amazonaws.com");
-      config.addAllowedOrigin("http://ec2-3-36-86-19.ap-northeast-2.compute.amazonaws.com/");
-      config.addAllowedOrigin("http://localhost:3000");
-      config.addAllowedOrigin("http://localhost:3000/");
-      //
+      config.addAllowedOrigin("*");
       config.addAllowedHeader("*");
-      //
-      config.addAllowedMethod("GET");
-      config.addAllowedMethod("POST");
-      config.addAllowedMethod("PATCH");
-      config.addAllowedMethod("DELETE");
-      config.setAllowCredentials(true);
-      //
+      config.addAllowedMethod("*");
+
       source.registerCorsConfiguration("/**", config);
       return new CorsFilter(source);
    }

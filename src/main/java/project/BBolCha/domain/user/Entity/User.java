@@ -28,6 +28,8 @@ public class User {
     @Column(name = "pw", nullable = false, length = 700)
     private String pw;
 
+    private String uimg;
+
     @ManyToMany
     @JoinTable(
             name = "user_authority",
