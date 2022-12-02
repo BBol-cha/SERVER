@@ -88,6 +88,7 @@ public class UserService {
                         .name(request.getName())
                         .email(request.getEmail())
                         .pw(passwordEncoder.encode(request.getPw()))
+                        .uimg("test.png")
                         .authorities(Collections.singleton(authority))
                         .build()
         );
