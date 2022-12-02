@@ -19,8 +19,8 @@ public class CorsConfig {
       config.addAllowedOrigin("http://localhost:8080/");
       config.addAllowedOrigin("http://ec2-3-36-86-19.ap-northeast-2.compute.amazonaws.com");
       config.addAllowedOrigin("http://ec2-3-36-86-19.ap-northeast-2.compute.amazonaws.com/");
-      config.addAllowedOrigin("http://localhost:3000");
-      config.addAllowedOrigin("http://localhost:3000/");
+/*      config.addAllowedOrigin("http://localhost:3000");
+      config.addAllowedOrigin("http://localhost:3000/");*/
       //
       //
       config.addAllowedMethod("GET");
