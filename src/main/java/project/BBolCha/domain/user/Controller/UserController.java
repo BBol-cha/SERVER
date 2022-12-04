@@ -1,6 +1,7 @@
 package project.BBolCha.domain.user.Controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import project.BBolCha.domain.user.Service.UserService;
 import project.BBolCha.global.Model.Status;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 public class UserController {
 
@@ -37,10 +39,13 @@ public class UserController {
     }
 
     // 로그인 만료시 atk 재발급
-    @GetMapping("auth")
+    @PostMapping("auth/rtk")
     public ResponseEntity<UserDto.loginResponse> reissue(
             @RequestHeader(value = "REFRESH_TOKEN") String rtk
     ) {
+        log.info("============================================");
+        log.info(rtk);
+        log.info("============================================");
         return userService.reissue(rtk);
     }
 
