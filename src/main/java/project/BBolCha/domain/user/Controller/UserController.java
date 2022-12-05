@@ -9,6 +9,9 @@ import project.BBolCha.domain.user.Dto.UserDto;
 import project.BBolCha.domain.user.Service.UserService;
 import project.BBolCha.global.Model.Status;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -25,28 +28,28 @@ public class UserController {
     // 로그인
     @PostMapping("auth/login")
     public ResponseEntity<UserDto.loginResponse> login(
-            @RequestBody UserDto.login request
+            @RequestBody UserDto.login request, HttpServletResponse response
     ) {
-        return userService.login(request);
+        return userService.login(request,response);
     }
 
     // 회원가입
     @PostMapping("auth")
     public ResponseEntity<UserDto.registerResponse> register(
-            @RequestBody UserDto.register request
+            @RequestBody UserDto.register request, HttpServletResponse response
     ) {
-        return userService.register(request);
+        return userService.register(request,response);
     }
 
     // 로그인 만료시 atk 재발급
     @PostMapping("auth/rtk")
     public ResponseEntity<UserDto.loginResponse> reissue(
-            @RequestHeader(value = "REFRESH_TOKEN") String rtk
+            @CookieValue(value = "refreshToken",required = false) Cookie cookie,HttpServletResponse response
     ) {
         log.info("============================================");
-        log.info(rtk);
+        log.info(cookie.getValue());
         log.info("============================================");
-        return userService.reissue(rtk);
+        return userService.reissue(cookie.getValue());
     }
 
     // 로그아웃

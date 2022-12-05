@@ -24,6 +24,8 @@ import project.BBolCha.global.config.Jwt.SecurityUtil;
 import project.BBolCha.global.config.Jwt.TokenProvider;
 import project.BBolCha.global.config.RedisDao;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
@@ -82,7 +84,7 @@ public class UserService {
     // Service
     // 회원가입
     @Transactional
-    public ResponseEntity<UserDto.registerResponse> register(UserDto.register request) {
+    public ResponseEntity<UserDto.registerResponse> register(UserDto.register request, HttpServletResponse response) {
         userRepository.save(
                 User.builder()
                         .name(request.getName())
@@ -103,17 +105,21 @@ public class UserService {
 
         redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
 
+        Cookie cookie = new Cookie("refreshToken", rtk);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
         return new ResponseEntity<>(UserDto.registerResponse.response(
                 request.getEmail(),
                 request.getName(),
                 atk,
-                rtk
+                "httponly"
         ), HttpStatus.CREATED);
     }
 
     //로그인
     @Transactional
-    public ResponseEntity<UserDto.loginResponse> login(UserDto.login request) {
+    public ResponseEntity<UserDto.loginResponse> login(UserDto.login request, HttpServletResponse response) {
         LOGIN_VALIDATE(request);
 
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -126,9 +132,14 @@ public class UserService {
 
         redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
 
+        Cookie cookie = new Cookie("refreshToken", rtk);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+
+
         return new ResponseEntity<>(UserDto.loginResponse.response(
                 atk,
-                rtk
+                "httponly"
         ), HttpStatus.OK);
     }
 
@@ -143,7 +154,7 @@ public class UserService {
 
         return new ResponseEntity<>(UserDto.loginResponse.response(
                 tokenProvider.reCreateToken(username),
-                null
+                "httponly"
         ), HttpStatus.CREATED);
     }
 
