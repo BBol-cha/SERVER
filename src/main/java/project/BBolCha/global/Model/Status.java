@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Status {
-    LOGOUT_TRUE("로그아웃 성공");
+    LOGOUT_TRUE("로그아웃 성공"),
+    IMAGE_DELETE_TRUE("이미지 삭제 성공");
     private final String statusMessage;
 }
