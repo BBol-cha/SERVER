@@ -21,7 +21,7 @@ public class UserController {
 
     // version 확인
     @GetMapping("version")
-    public ResponseEntity<String> version(){
+    public ResponseEntity<String> version() {
         return new ResponseEntity<>("version 1.0.6", HttpStatus.OK);
     }
 
@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<UserDto.loginResponse> login(
             @RequestBody UserDto.login request, HttpServletResponse response
     ) {
-        return userService.login(request,response);
+        return userService.login(request, response);
     }
 
     // 회원가입
@@ -38,13 +38,13 @@ public class UserController {
     public ResponseEntity<UserDto.registerResponse> register(
             @RequestBody UserDto.register request, HttpServletResponse response
     ) {
-        return userService.register(request,response);
+        return userService.register(request, response);
     }
 
     // 로그인 만료시 atk 재발급
-    @PostMapping("auth/rtk")
+    @GetMapping("auth")
     public ResponseEntity<UserDto.loginResponse> reissue(
-            @CookieValue(value = "refreshToken",required = false) Cookie cookie,HttpServletResponse response
+            @CookieValue(value = "refreshToken", required = false) Cookie cookie, HttpServletResponse response
     ) {
         log.info("============================================");
         log.info(cookie.getValue());
