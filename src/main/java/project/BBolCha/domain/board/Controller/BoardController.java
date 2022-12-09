@@ -12,6 +12,7 @@ import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class BoardController {
             @RequestBody BoardDto.Request request
     ){
         return boardService.create(request);
+    }
+
+    @GetMapping("board/list")
+    public ResponseEntity<List<Board>> read(){
+        return boardService.read();
     }
 
     // 게시판 이미지 업로드

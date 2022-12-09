@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Entity.Board;
@@ -18,6 +19,7 @@ import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,6 +33,7 @@ public class BoardService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Transactional
     public ResponseEntity<Board> create(BoardDto.Request request) {
         User user = userRepository.findByEmail(
                 SecurityContextHolder
@@ -55,6 +58,7 @@ public class BoardService {
 
     }
 
+    @Transactional
     public ResponseEntity<BoardDto.boardImage> putImage(MultipartFile multipartFile) throws IOException {
         UUID uuid = UUID.randomUUID();
         String imageName = "board/" + uuid;
@@ -68,9 +72,15 @@ public class BoardService {
         ),HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
 
         amazonS3Client.deleteObject(bucket,request.getImgName());
         return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE,HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<List<Board>> read() {
+        return new ResponseEntity<>(boardRepository.findAll(),HttpStatus.OK);
     }
 }
