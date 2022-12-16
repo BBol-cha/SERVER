@@ -25,7 +25,9 @@ import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -108,5 +110,15 @@ public class BoardService {
     public ResponseEntity<Page<Board>> read(Integer page, Integer limit) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, "createAt");
         return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Board> readDetail(Long id) {
+        Optional<Board> board = boardRepository.findById(id);
+
+        Board note = board.orElseThrow(
+                NullPointerException::new
+        );
+
+        return new ResponseEntity<>(note,HttpStatus.OK);
     }
 }

@@ -33,6 +33,13 @@ public class BoardController {
         return boardService.read(page, limit);
     }
 
+    @GetMapping("board/list/{id}")
+    public ResponseEntity<Board> readDetail(
+            @PathVariable("id") Long id
+    ){
+        return boardService.readDetail(id);
+    }
+
     // 게시판 이미지 업로드
     @PostMapping("board/image")
     public ResponseEntity<BoardDto.boardImage> putImage(
