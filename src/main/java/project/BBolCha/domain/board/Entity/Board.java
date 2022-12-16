@@ -31,11 +31,11 @@ public class Board {
 
     @NotNull
     private String name;
-    @Column(name = "title",length = 65)
+    @Column(name = "title", length = 65)
     @NotNull
     private String title;
 
-    @Column(name = "note",length = 10000)
+    @Column(name = "note", length = 10000)
     @NotNull
     private String note;
     @Column(name = "views")
@@ -47,6 +47,8 @@ public class Board {
     private String answer;
 
     private String bimg;
+
+    private String tag;
 
     @Column(name = "create_at")
     @CreatedDate
