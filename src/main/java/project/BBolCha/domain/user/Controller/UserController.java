@@ -22,7 +22,7 @@ public class UserController {
     // version 확인
     @GetMapping("version")
     public ResponseEntity<String> version() {
-        return new ResponseEntity<>("version 1.0.6", HttpStatus.OK);
+        return new ResponseEntity<>("version 2.0.0", HttpStatus.OK);
     }
 
     // 로그인
