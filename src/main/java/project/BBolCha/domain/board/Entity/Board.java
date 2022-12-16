@@ -34,6 +34,7 @@ public class Board {
     @Column(name = "title",length = 65)
     @NotNull
     private String title;
+
     @Column(name = "note",length = 10000)
     @NotNull
     private String note;
@@ -41,15 +42,16 @@ public class Board {
     @NotNull
     private Integer views;
 
-    @Column(name = "stitle")
-    private String subTitle;
+    @Column(name = "answer")
+    @NotNull
+    private String answer;
 
     private String bimg;
 
     @Column(name = "create_at")
     @CreatedDate
     @NotNull
-    private LocalDateTime creatAt;
+    private LocalDateTime createAt;
 
     @Column(name = "update_at")
     @LastModifiedDate

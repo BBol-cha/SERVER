@@ -21,9 +21,9 @@ public class BoardDto {
         private String title;
         private String note;
         private Integer views;
-        private String subTitle;
+        private String answer;
         private String bimg;
-        private LocalDateTime creatAt;
+        private LocalDateTime createAt;
         private LocalDateTime updateAt;
 
         public BoardDto.Request Response(Board board) {
@@ -35,8 +35,8 @@ public class BoardDto {
                     .bimg(board.getBimg())
                     .views(board.getViews())
                     .note(board.getNote())
-                    .subTitle(board.getSubTitle())
-                    .creatAt(board.getCreatAt())
+                    .answer(board.getAnswer())
+                    .createAt(board.getCreateAt())
                     .updateAt(board.getUpdateAt())
                     .build();
         }
