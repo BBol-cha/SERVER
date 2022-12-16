@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Entity.Board;
+import project.BBolCha.domain.board.Entity.TagCategory;
 import project.BBolCha.domain.board.Repository.BoardRepository;
+import project.BBolCha.domain.board.Repository.TagCategoryRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
@@ -31,13 +33,15 @@ import java.util.UUID;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final TagCategoryRepository tagCategoryRepository;
 
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Transactional
-    public ResponseEntity<Board> create(BoardDto.Request request) {
+    public ResponseEntity<BoardDto.Request> create(BoardDto.Request request) {
+
         User user = userRepository.findByEmail(
                 SecurityContextHolder
                         .getContext()
@@ -47,7 +51,22 @@ public class BoardService {
                 NullPointerException::new
         );
 
-        return new ResponseEntity<>(boardRepository.save(
+        String[] tag = request.getTag();
+
+        for (String s : tag) {
+            if (tagCategoryRepository.findByTag(s).isEmpty()) {
+                tagCategoryRepository.save(
+                        TagCategory.builder()
+                                .tag(s)
+                                .build()
+                );
+            }
+        }
+
+        String strArrayToString = String.join(",", tag); // 문자열 배열을 Join
+
+
+        Board board = boardRepository.save(
                 Board.builder()
                         .userId(user.getId())
                         .title(request.getTitle())
@@ -56,8 +75,11 @@ public class BoardService {
                         .bimg(request.getBimg())
                         .note(request.getNote())
                         .views(0)
+                        .tag(strArrayToString)
                         .build()
-        ), HttpStatus.CREATED);
+        );
+
+        return new ResponseEntity<>(BoardDto.Request.Response(board, strArrayToString.split(",")), HttpStatus.CREATED);
 
     }
 
