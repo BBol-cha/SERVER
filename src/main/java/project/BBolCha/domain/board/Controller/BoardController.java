@@ -14,6 +14,7 @@ import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class BoardController {
     private final BoardService boardService;
 
+    // 게시글 생성
     @PostMapping("board")
     public ResponseEntity<BoardDto.Request> create(
             @RequestBody BoardDto.Request request
@@ -28,6 +30,7 @@ public class BoardController {
         return boardService.create(request);
     }
 
+    // 게시글 페이지 조회
     @GetMapping("board/list")
     public ResponseEntity<Page<Board>> read(
             @RequestParam Integer page, @RequestParam Integer limit
@@ -35,11 +38,20 @@ public class BoardController {
         return boardService.read(page, limit);
     }
 
+    // 게시글 상세 조회
     @GetMapping("board/list/{id}")
     public ResponseEntity<Board> readDetail(
             @PathVariable("id") Long id
     ){
         return boardService.readDetail(id);
+    }
+
+    // 게시글 상세 댓글 조회
+    @GetMapping("board/list/comment/{bid}")
+    public ResponseEntity<List<Comment>> readComment(
+            @PathVariable("bid") Long bid
+    ){
+        return boardService.readComment(bid);
     }
 
     // 게시판 이미지 업로드
@@ -58,6 +70,7 @@ public class BoardController {
         return boardService.deleteImage(request);
     }
 
+    // 게시글 댓글 작성
     @PostMapping("board/comment")
     public ResponseEntity<Comment> addComment(
             @RequestParam Long bid, @RequestBody CommentDto.Request request

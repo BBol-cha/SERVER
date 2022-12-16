@@ -25,9 +25,11 @@ import project.BBolCha.domain.board.Repository.CommentRepository;
 import project.BBolCha.domain.board.Repository.TagCategoryRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
+import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -145,5 +147,9 @@ public class BoardService {
                                 .build()
                 ), HttpStatus.OK
         );
+    }
+
+    public ResponseEntity<List<Comment>> readComment(Long bid) {
+        return new ResponseEntity<>(commentRepository.findByBid(bid),HttpStatus.OK);
     }
 }
