@@ -20,7 +20,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("board")
-    public ResponseEntity<Board> create(
+    public ResponseEntity<BoardDto.Request> create(
             @RequestBody BoardDto.Request request
     ) {
         return boardService.create(request);
