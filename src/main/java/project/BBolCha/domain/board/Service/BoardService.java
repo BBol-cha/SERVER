@@ -5,6 +5,10 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +23,6 @@ import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -48,7 +51,7 @@ public class BoardService {
                 Board.builder()
                         .userId(user.getId())
                         .title(request.getTitle())
-                        .subTitle(request.getSubTitle())
+                        .answer(request.getAnswer())
                         .name(user.getName())
                         .bimg(request.getBimg())
                         .note(request.getNote())
@@ -64,23 +67,24 @@ public class BoardService {
         String imageName = "board/" + uuid;
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket,imageName,multipartFile.getInputStream(),objMeta);
+        amazonS3Client.putObject(bucket, imageName, multipartFile.getInputStream(), objMeta);
 
         return new ResponseEntity<>(BoardDto.boardImage.response(
                 imageName,
-                amazonS3Client.getUrl(bucket,imageName).toString()
-        ),HttpStatus.OK);
+                amazonS3Client.getUrl(bucket, imageName).toString()
+        ), HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
 
-        amazonS3Client.deleteObject(bucket,request.getImgName());
-        return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE,HttpStatus.OK);
+        amazonS3Client.deleteObject(bucket, request.getImgName());
+        return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<List<Board>> read() {
-        return new ResponseEntity<>(boardRepository.findAll(),HttpStatus.OK);
+    public ResponseEntity<Page<Board>> read(Integer page, Integer limit) {
+        Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, "createAt");
+        return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
     }
 }
