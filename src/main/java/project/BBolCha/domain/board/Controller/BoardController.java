@@ -2,8 +2,8 @@ package project.BBolCha.domain.board.Controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
@@ -12,7 +12,6 @@ import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,13 +22,15 @@ public class BoardController {
     @PostMapping("board")
     public ResponseEntity<Board> create(
             @RequestBody BoardDto.Request request
-    ){
+    ) {
         return boardService.create(request);
     }
 
     @GetMapping("board/list")
-    public ResponseEntity<List<Board>> read(){
-        return boardService.read();
+    public ResponseEntity<Page<Board>> read(
+            @RequestParam Integer page, @RequestParam Integer limit
+    ) {
+        return boardService.read(page, limit);
     }
 
     // 게시판 이미지 업로드
