@@ -59,6 +59,9 @@ public class BoardController {
     public ResponseEntity<BoardDto.boardImage> putImage(
             @RequestParam("file") MultipartFile multipartFile
     ) throws IOException {
+        log.info("#################");
+        log.info(multipartFile.getName());
+        log.info("#################");
         return boardService.putImage(multipartFile);
     }
 

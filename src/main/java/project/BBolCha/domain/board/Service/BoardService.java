@@ -92,11 +92,18 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<BoardDto.boardImage> putImage(MultipartFile multipartFile) throws IOException {
+        log.info("$$$$$$$$$$$$$$$$$$$");
+        log.info(multipartFile.getName());
+        log.info("$$$$$$$$$$$$$$$$$$$");
         UUID uuid = UUID.randomUUID();
         String imageName = "board/" + uuid;
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
         amazonS3Client.putObject(bucket, imageName, multipartFile.getInputStream(), objMeta);
+
+        log.info("%%%%%%%%%%%%%%%");
+        log.info(multipartFile.getName());
+        log.info("%%%%%%%%%%%%%%%");
 
         return new ResponseEntity<>(BoardDto.boardImage.response(
                 imageName,
