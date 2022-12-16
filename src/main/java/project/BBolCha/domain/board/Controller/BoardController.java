@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
+import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
+import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
 
@@ -54,6 +56,13 @@ public class BoardController {
             @RequestBody BoardDto.boardImage request
     ) throws IOException {
         return boardService.deleteImage(request);
+    }
+
+    @PostMapping("board/comment")
+    public ResponseEntity<Comment> addComment(
+            @RequestParam Long bid, @RequestBody CommentDto.Request request
+            ){
+        return boardService.addComment(bid, request);
     }
 
 }

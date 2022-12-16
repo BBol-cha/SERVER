@@ -16,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
+import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
+import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Entity.TagCategory;
 import project.BBolCha.domain.board.Repository.BoardRepository;
+import project.BBolCha.domain.board.Repository.CommentRepository;
 import project.BBolCha.domain.board.Repository.TagCategoryRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
@@ -27,7 +30,6 @@ import project.BBolCha.global.Model.Status;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,6 +38,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final TagCategoryRepository tagCategoryRepository;
+    private final CommentRepository commentRepository;
 
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
@@ -119,6 +122,28 @@ public class BoardService {
                 NullPointerException::new
         );
 
-        return new ResponseEntity<>(note,HttpStatus.OK);
+        return new ResponseEntity<>(note, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Comment> addComment(Long bid, CommentDto.Request request) {
+        User user = userRepository.findByEmail(
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()
+        ).orElseThrow(
+                NullPointerException::new
+        );
+
+        return new ResponseEntity<>(
+                commentRepository.save(
+                        Comment.builder()
+                                .bid(bid)
+                                .uid(user.getId())
+                                .name(user.getName())
+                                .note(request.getNote())
+                                .build()
+                ), HttpStatus.OK
+        );
     }
 }
