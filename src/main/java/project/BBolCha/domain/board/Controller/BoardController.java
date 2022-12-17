@@ -2,6 +2,7 @@ package project.BBolCha.domain.board.Controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,22 @@ public class BoardController {
             @RequestBody BoardDto.Request request
     ) {
         return boardService.create(request);
+    }
+
+    // 게시글 수정
+    @PatchMapping("board/{id}")
+    public ResponseEntity<Status> update(
+            @PathVariable Long id, @RequestBody BoardDto.Request request
+    ){
+        return boardService.update(id,request);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("board/{id}")
+    public ResponseEntity<Status> delete(
+            @PathVariable Long id
+    ){
+        return boardService.delete(id);
     }
 
     // 게시글 페이지 조회

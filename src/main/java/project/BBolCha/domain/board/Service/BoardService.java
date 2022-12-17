@@ -25,13 +25,15 @@ import project.BBolCha.domain.board.Repository.CommentRepository;
 import project.BBolCha.domain.board.Repository.TagCategoryRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
-import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static project.BBolCha.global.Model.Status.BOARD_DELETE_TRUE;
+import static project.BBolCha.global.Model.Status.BOARD_UPDATE_TRUE;
 
 @Service
 @Slf4j
@@ -124,6 +126,7 @@ public class BoardService {
         return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Board> readDetail(Long id) {
         Optional<Board> board = boardRepository.findById(id);
 
@@ -134,6 +137,7 @@ public class BoardService {
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Comment> addComment(Long bid, CommentDto.Request request) {
         User user = userRepository.findByEmail(
                 SecurityContextHolder
@@ -156,7 +160,53 @@ public class BoardService {
         );
     }
 
+    @Transactional
     public ResponseEntity<List<Comment>> readComment(Long bid) {
-        return new ResponseEntity<>(commentRepository.findByBid(bid),HttpStatus.OK);
+        return new ResponseEntity<>(commentRepository.findByBid(bid), HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Status> update(Long id, BoardDto.Request request) {
+        log.info(id.toString());
+
+        Board board = boardRepository.findById(id).orElseThrow(
+                NullPointerException::new
+        );
+
+        String[] tag = request.getTag();
+
+        for (String s : tag) {
+            if (tagCategoryRepository.findByTag(s).isEmpty()) {
+                tagCategoryRepository.save(
+                        TagCategory.builder()
+                                .tag(s)
+                                .build()
+                );
+            }
+        }
+
+        String strArrayToString = String.join(",", tag); // 문자열 배열을 Join
+
+        boardRepository.save(
+                Board.builder()
+                        .id(id)
+                        .userId(board.getUserId())
+                        .title(request.getTitle())
+                        .answer(request.getAnswer())
+                        .name(board.getName())
+                        .bimg(request.getBimg())
+                        .note(request.getNote())
+                        .views(board.getViews())
+                        .tag(strArrayToString)
+                        .createAt(board.getCreateAt())
+                        .build()
+        );
+
+        return new ResponseEntity<>(BOARD_UPDATE_TRUE,HttpStatus.OK);
+    }
+
+    public ResponseEntity<Status> delete(Long id) {
+        boardRepository.deleteById(id);
+        return new ResponseEntity<>(BOARD_DELETE_TRUE,HttpStatus.OK);
     }
 }
