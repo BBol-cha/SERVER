@@ -11,4 +11,6 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     boolean existsByEmail(String email);
     @Transactional
     void deleteByEmail(String email);
+    @Transactional
+    Long countByBid(Long bid);
 }

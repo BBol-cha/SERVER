@@ -56,7 +56,7 @@ public class BoardController {
 
     // 게시글 상세 조회
     @GetMapping("board/list/{id}")
-    public ResponseEntity<Board> readDetail(
+    public ResponseEntity<BoardDto.detailResponse> readDetail(
             @PathVariable("id") Long id
     ) {
         return boardService.readDetail(id);
