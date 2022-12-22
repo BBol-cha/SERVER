@@ -134,6 +134,21 @@ public class BoardService {
                 NullPointerException::new
         );
 
+        boardRepository.save(
+                Board.builder()
+                        .id(id)
+                        .userId(note.getUserId())
+                        .title(note.getTitle())
+                        .answer(note.getAnswer())
+                        .name(note.getName())
+                        .bimg(note.getBimg())
+                        .note(note.getNote())
+                        .views(note.getViews() + 1)
+                        .tag(note.getTag())
+                        .createAt(note.getCreateAt())
+                        .build()
+        );
+
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
 
