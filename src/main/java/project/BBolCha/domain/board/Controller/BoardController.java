@@ -2,7 +2,6 @@ package project.BBolCha.domain.board.Controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,15 +34,15 @@ public class BoardController {
     @PatchMapping("board/{id}")
     public ResponseEntity<Status> update(
             @PathVariable Long id, @RequestBody BoardDto.Request request
-    ){
-        return boardService.update(id,request);
+    ) {
+        return boardService.update(id, request);
     }
 
     // 게시글 삭제
     @DeleteMapping("board/{id}")
     public ResponseEntity<Status> delete(
             @PathVariable Long id
-    ){
+    ) {
         return boardService.delete(id);
     }
 
@@ -59,7 +58,7 @@ public class BoardController {
     @GetMapping("board/list/{id}")
     public ResponseEntity<Board> readDetail(
             @PathVariable("id") Long id
-    ){
+    ) {
         return boardService.readDetail(id);
     }
 
@@ -67,7 +66,7 @@ public class BoardController {
     @GetMapping("board/list/comment/{bid}")
     public ResponseEntity<List<Comment>> readComment(
             @PathVariable("bid") Long bid
-    ){
+    ) {
         return boardService.readComment(bid);
     }
 
@@ -94,8 +93,15 @@ public class BoardController {
     @PostMapping("board/comment")
     public ResponseEntity<Comment> addComment(
             @RequestParam Long bid, @RequestBody CommentDto.Request request
-            ){
+    ) {
         return boardService.addComment(bid, request);
+    }
+
+    @PostMapping("board/like")
+    public ResponseEntity<BoardDto.Like> addLike(
+            @RequestParam("bid") Long bid
+    ) {
+        return boardService.addLike(bid);
     }
 
 }

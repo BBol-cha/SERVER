@@ -59,4 +59,20 @@ public class BoardDto {
                     .build();
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class Like {
+        private String status;
+        private String statusMessage;
+
+        public static BoardDto.Like response(String status, String statusMessage) {
+            return Like.builder()
+                    .status(status)
+                    .statusMessage(statusMessage)
+                    .build();
+        }
+    }
 }

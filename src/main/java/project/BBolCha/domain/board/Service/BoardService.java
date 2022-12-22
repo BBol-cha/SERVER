@@ -19,9 +19,11 @@ import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Comment;
+import project.BBolCha.domain.board.Entity.Like;
 import project.BBolCha.domain.board.Entity.TagCategory;
 import project.BBolCha.domain.board.Repository.BoardRepository;
 import project.BBolCha.domain.board.Repository.CommentRepository;
+import project.BBolCha.domain.board.Repository.LikeRepository;
 import project.BBolCha.domain.board.Repository.TagCategoryRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
@@ -43,6 +45,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final TagCategoryRepository tagCategoryRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
@@ -220,8 +223,35 @@ public class BoardService {
         return new ResponseEntity<>(BOARD_UPDATE_TRUE,HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<Status> delete(Long id) {
         boardRepository.deleteById(id);
         return new ResponseEntity<>(BOARD_DELETE_TRUE,HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<BoardDto.Like> addLike(Long bid) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(likeRepository.existsByEmail(email)){
+            likeRepository.deleteByEmail(email);
+            return new ResponseEntity<>(
+                    BoardDto.Like.response(
+                            "cancel","좋아요 취소"
+                    ),HttpStatus.OK
+            );
+        }
+
+        likeRepository.save(
+                Like.builder()
+                        .bid(bid)
+                        .email(SecurityContextHolder.getContext().getAuthentication().getName())
+                        .build()
+        );
+
+        return new ResponseEntity<>(
+                BoardDto.Like.response(
+                        "add","좋아요 등록"
+                ),HttpStatus.OK
+        );
     }
 }
