@@ -49,9 +49,9 @@ public class BoardController {
     // 게시글 페이지 조회
     @GetMapping("board/list")
     public ResponseEntity<Page<Board>> read(
-            @RequestParam Integer page, @RequestParam Integer limit
+            @RequestParam Integer page, @RequestParam Integer limit, @RequestParam String filter, @RequestParam String arrange
     ) {
-        return boardService.read(page, limit);
+        return boardService.read(page, limit,filter,arrange);
     }
 
     // 게시글 상세 조회

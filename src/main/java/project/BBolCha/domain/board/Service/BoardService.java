@@ -124,8 +124,16 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<Page<Board>> read(Integer page, Integer limit) {
-        Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, "createAt");
+    public ResponseEntity<Page<Board>> read(Integer page, Integer limit, String filter, String arrange) {
+        /*
+         Filter : 조회수 / 생성날짜 (views / createAt)
+         arrange : 정렬방식
+         */
+        if (arrange.equals("ASC")) {
+            Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.ASC, filter);
+            return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
+        }
+        Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, filter);
         return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
     }
 
@@ -150,7 +158,7 @@ public class BoardService {
                                 .tag(note.getTag())
                                 .createAt(note.getCreateAt())
                                 .build()
-                ),likeRepository.countByBid(id)
+                ), likeRepository.countByBid(id)
         ), HttpStatus.OK);
     }
 
@@ -219,24 +227,24 @@ public class BoardService {
                         .build()
         );
 
-        return new ResponseEntity<>(BOARD_UPDATE_TRUE,HttpStatus.OK);
+        return new ResponseEntity<>(BOARD_UPDATE_TRUE, HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<Status> delete(Long id) {
         boardRepository.deleteById(id);
-        return new ResponseEntity<>(BOARD_DELETE_TRUE,HttpStatus.OK);
+        return new ResponseEntity<>(BOARD_DELETE_TRUE, HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<BoardDto.Like> addLike(Long bid) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(likeRepository.existsByEmail(email)){
+        if (likeRepository.existsByEmail(email)) {
             likeRepository.deleteByEmail(email);
             return new ResponseEntity<>(
                     BoardDto.Like.response(
-                            "cancel","좋아요 취소"
-                    ),HttpStatus.OK
+                            "cancel", "좋아요 취소"
+                    ), HttpStatus.OK
             );
         }
 
@@ -249,8 +257,8 @@ public class BoardService {
 
         return new ResponseEntity<>(
                 BoardDto.Like.response(
-                        "add","좋아요 등록"
-                ),HttpStatus.OK
+                        "add", "좋아요 등록"
+                ), HttpStatus.OK
         );
     }
 }
