@@ -30,8 +30,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
 
-import static project.BBolCha.global.Exception.CustomErrorCode.LOGIN_FALSE;
-import static project.BBolCha.global.Exception.CustomErrorCode.REFRESH_TOKEN_IS_BAD_REQUEST;
+import static project.BBolCha.global.Exception.CustomErrorCode.*;
 import static project.BBolCha.global.Model.Status.LOGOUT_TRUE;
 
 
@@ -69,6 +68,9 @@ public class UserService {
                 .orElseThrow(
                         () -> new CustomException(LOGIN_FALSE)
                 );
+
+        if (request.getPw().equals("kakao"))
+            throw new CustomException(NOT_SOCIAL_LOGIN);
 
         if (!passwordEncoder.matches(
                 request.getPw(),
