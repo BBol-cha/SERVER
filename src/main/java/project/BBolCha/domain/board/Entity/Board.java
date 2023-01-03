@@ -48,6 +48,9 @@ public class Board {
     @NotNull
     private String answer;
 
+    @Column(name = "hints")
+    private String hints;
+
     private String bimg;
 
     private String tag;

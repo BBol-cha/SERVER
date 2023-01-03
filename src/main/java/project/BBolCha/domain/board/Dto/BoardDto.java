@@ -26,8 +26,9 @@ public class BoardDto {
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
         private String[] tag;
+        private String[] hints;
 
-        public static BoardDto.Request Response(Board board, String[] tag) {
+        public static BoardDto.Request Response(Board board) {
             return Request.builder()
                     .id(board.getId())
                     .userId(board.getUserId())
@@ -39,7 +40,8 @@ public class BoardDto {
                     .answer(board.getAnswer())
                     .createAt(board.getCreateAt())
                     .updateAt(board.getUpdateAt())
-                    .tag(tag)
+                    .tag(board.getTag().split(","))
+                    .hints(board.getHints().split(","))
                     .build();
         }
     }

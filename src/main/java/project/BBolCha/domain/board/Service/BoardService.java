@@ -63,9 +63,8 @@ public class BoardService {
                 NullPointerException::new
         );
 
-        String[] tag = request.getTag();
-
-        for (String s : tag) {
+        // 태그 카테고리에 없는거 추가
+        for (String s : request.getTag()) {
             if (tagCategoryRepository.findByTag(s).isEmpty()) {
                 tagCategoryRepository.save(
                         TagCategory.builder()
@@ -74,8 +73,6 @@ public class BoardService {
                 );
             }
         }
-
-        String strArrayToString = String.join(",", tag); // 문자열 배열을 Join
 
 
         Board board = boardRepository.save(
@@ -87,11 +84,12 @@ public class BoardService {
                         .bimg(request.getBimg())
                         .note(request.getNote())
                         .views(0)
-                        .tag(strArrayToString)
+                        .tag(String.join(",", request.getTag())) // 배열을 String으로 전환
+                        .hints(String.join(",",request.getHints()))
                         .build()
         );
 
-        return new ResponseEntity<>(BoardDto.Request.Response(board, strArrayToString.split(",")), HttpStatus.CREATED);
+        return new ResponseEntity<>(BoardDto.Request.Response(board), HttpStatus.CREATED);
 
     }
 
