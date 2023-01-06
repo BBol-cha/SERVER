@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.9'
 	// developmentOnly
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	// compileOnly
 	compileOnly 'org.projectlombok:lombok'
 	// runtimeOnly

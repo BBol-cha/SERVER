@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
@@ -85,7 +86,7 @@ public class BoardService {
                         .note(request.getNote())
                         .views(0)
                         .tag(String.join(",", request.getTag())) // 배열을 String으로 전환
-                        .hints(String.join(",",request.getHints()))
+                        .hints(String.join(",", request.getHints()))
                         .build()
         );
 
@@ -183,9 +184,12 @@ public class BoardService {
         );
     }
 
+    // 댓글
+
     @Transactional
-    public ResponseEntity<List<Comment>> readComment(Long bid) {
-        return new ResponseEntity<>(commentRepository.findByBid(bid), HttpStatus.OK);
+    public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
+        Pageable pageWithTenElements = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
+        return new ResponseEntity<>(commentRepository.findByBid(bid,pageWithTenElements), HttpStatus.OK);
     }
 
     @Transactional

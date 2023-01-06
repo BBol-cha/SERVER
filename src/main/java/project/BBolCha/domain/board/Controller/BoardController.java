@@ -63,11 +63,11 @@ public class BoardController {
     }
 
     // 게시글 상세 댓글 조회
-    @GetMapping("board/list/comment/{bid}")
-    public ResponseEntity<List<Comment>> readComment(
-            @PathVariable("bid") Long bid
+    @GetMapping("board/list/comment")
+    public ResponseEntity<Page<Comment>> readComment(
+            @RequestParam("bid") Long bid, @RequestParam Integer page
     ) {
-        return boardService.readComment(bid);
+        return boardService.readComment(bid,page);
     }
 
     // 게시판 이미지 업로드
