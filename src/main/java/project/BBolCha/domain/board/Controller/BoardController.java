@@ -5,16 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,7 +47,7 @@ public class BoardController {
     public ResponseEntity<Page<Board>> read(
             @RequestParam Integer page, @RequestParam Integer limit, @RequestParam String filter, @RequestParam String arrange
     ) {
-        return boardService.read(page, limit,filter,arrange);
+        return boardService.read(page, limit, filter, arrange);
     }
 
     // 게시글 상세 조회
@@ -67,10 +63,10 @@ public class BoardController {
     public ResponseEntity<Page<Comment>> readComment(
             @RequestParam("bid") Long bid, @RequestParam Integer page
     ) {
-        return boardService.readComment(bid,page);
+        return boardService.readComment(bid, page);
     }
 
-    // 게시판 이미지 업로드
+/*    // 게시판 이미지 업로드
     @PostMapping("board/image")
     public ResponseEntity<BoardDto.boardImage> putImage(
             @RequestParam("file") MultipartFile multipartFile
@@ -87,7 +83,7 @@ public class BoardController {
             @RequestBody BoardDto.boardImage request
     ) throws IOException {
         return boardService.deleteImage(request);
-    }
+    }*/
 
     // 게시글 댓글 작성
     @PostMapping("board/comment")

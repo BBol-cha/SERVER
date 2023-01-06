@@ -1,10 +1,7 @@
 package project.BBolCha.domain.board.Service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
@@ -30,10 +25,7 @@ import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static project.BBolCha.global.Model.Status.BOARD_DELETE_TRUE;
 import static project.BBolCha.global.Model.Status.BOARD_UPDATE_TRUE;
@@ -47,10 +39,11 @@ public class BoardService {
     private final TagCategoryRepository tagCategoryRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-
+/*
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+*/
 
     @Transactional
     public ResponseEntity<BoardDto.Request> create(BoardDto.Request request) {
@@ -94,7 +87,7 @@ public class BoardService {
 
     }
 
-    @Transactional
+/*    @Transactional
     public ResponseEntity<BoardDto.boardImage> putImage(MultipartFile multipartFile) throws IOException {
         log.info("$$$$$$$$$$$$$$$$$$$");
         log.info(multipartFile.getName());
@@ -120,7 +113,7 @@ public class BoardService {
 
         amazonS3Client.deleteObject(bucket, request.getImgName());
         return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
-    }
+    }*/
 
     @Transactional
     public ResponseEntity<Page<Board>> read(Integer page, Integer limit, String filter, String arrange) {
@@ -189,7 +182,7 @@ public class BoardService {
     @Transactional
     public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
-        return new ResponseEntity<>(commentRepository.findByBid(bid,pageWithTenElements), HttpStatus.OK);
+        return new ResponseEntity<>(commentRepository.findByBid(bid, pageWithTenElements), HttpStatus.OK);
     }
 
     @Transactional
