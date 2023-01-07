@@ -27,8 +27,7 @@ import project.BBolCha.global.Model.Status;
 
 import java.util.Optional;
 
-import static project.BBolCha.global.Model.Status.BOARD_DELETE_TRUE;
-import static project.BBolCha.global.Model.Status.BOARD_UPDATE_TRUE;
+import static project.BBolCha.global.Model.Status.*;
 
 @Service
 @Slf4j
@@ -255,5 +254,10 @@ public class BoardService {
                         "add", "좋아요 등록"
                 ), HttpStatus.OK
         );
+    }
+
+    public ResponseEntity<Status> deleteComment(Long id) {
+        commentRepository.deleteById(id);
+        return new ResponseEntity<>(COMMENT_DELETE_TRUE, HttpStatus.OK);
     }
 }

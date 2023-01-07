@@ -58,7 +58,7 @@ public class BoardController {
         return boardService.readDetail(id);
     }
 
-    // 게시글 상세 댓글 조회
+    // 게시글 댓글 조회
     @GetMapping("board/list/comment")
     public ResponseEntity<Page<Comment>> readComment(
             @RequestParam("bid") Long bid, @RequestParam Integer page
@@ -91,6 +91,14 @@ public class BoardController {
             @RequestParam Long bid, @RequestBody CommentDto.Request request
     ) {
         return boardService.addComment(bid, request);
+    }
+
+    // 게시글 댓글 삭제
+    @DeleteMapping("board/comment")
+    public ResponseEntity<Status> deleteComment(
+            @RequestParam Long id
+    ){
+        return boardService.deleteComment(id);
     }
 
     @PostMapping("board/like")
