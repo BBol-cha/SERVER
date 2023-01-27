@@ -12,6 +12,8 @@ import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.Status;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -75,7 +77,7 @@ public class BoardController {
         log.info(multipartFile.getName());
         log.info("#################");
         return boardService.putImage(multipartFile);
-    }
+    }*/
 
     // 이미지 업로드 해놓고 게시판 글작성 취소시 업로드 됐던 이미지 삭제
     @DeleteMapping("board/image")
@@ -83,7 +85,7 @@ public class BoardController {
             @RequestBody BoardDto.boardImage request
     ) throws IOException {
         return boardService.deleteImage(request);
-    }*/
+    }
 
     // 게시글 댓글 작성
     @PostMapping("board/comment")
@@ -97,7 +99,7 @@ public class BoardController {
     @DeleteMapping("board/comment")
     public ResponseEntity<Status> deleteComment(
             @RequestParam Long id
-    ){
+    ) {
         return boardService.deleteComment(id);
     }
 

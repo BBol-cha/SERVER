@@ -1,7 +1,9 @@
 package project.BBolCha.domain.board.Service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,11 +40,9 @@ public class BoardService {
     private final TagCategoryRepository tagCategoryRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-/*
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-*/
 
     @Transactional
     public ResponseEntity<BoardDto.Request> create(BoardDto.Request request) {
@@ -105,14 +105,14 @@ public class BoardService {
                 imageName,
                 amazonS3Client.getUrl(bucket, imageName).toString()
         ), HttpStatus.OK);
-    }
+    }*/
 
     @Transactional
     public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
 
-        amazonS3Client.deleteObject(bucket, request.getImgName());
+        amazonS3Client.deleteObject(bucket, "board/" + request.getImgName());
         return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
-    }*/
+    }
 
     @Transactional
     public ResponseEntity<Page<Board>> read(Integer page, Integer limit, String filter, String arrange) {

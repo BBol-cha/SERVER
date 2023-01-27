@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static project.BBolCha.global.Exception.CustomErrorCode.JWT_TIMEOUT;
+import static project.BBolCha.global.Exception.CustomErrorCode.Authentication_Entry_Point;
 
 
 @Component
@@ -30,8 +30,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         CustomErrorResponse error = new CustomErrorResponse();
-        error.setStatus(JWT_TIMEOUT);
-        error.setStatusMessage("만료된 JWT 토큰입니다.");
+        error.setStatus(Authentication_Entry_Point);
+        error.setStatusMessage("토큰이 NULL 이거나 잘못된 AccessToken 입니다.");
 
         // {"username":"loop-study", "age":20}
         String result = objectMapper.writeValueAsString(error);

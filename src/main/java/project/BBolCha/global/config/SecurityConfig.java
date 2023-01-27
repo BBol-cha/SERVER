@@ -62,7 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth","/auth/login","/version","/auth/rtk","/board/list","/board/list/{id}","/board/list/comment/{bid}","/auth/kakao","/auth/kakao/login").permitAll()
+                .antMatchers("/auth","/auth/login","/version","/auth/rtk",
+                        "/board/list","/board/list/{id}","/board/list/comment/{bid}",
+                        "/auth/kakao","/auth/kakao/login").permitAll()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .anyRequest().authenticated()
 
