@@ -62,9 +62,10 @@ public class BoardDto {
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
         private String tag;
+        private Boolean like;
         private Long likes;
 
-        public static BoardDto.detailResponse response(Board board ,Long likes) {
+        public static BoardDto.detailResponse response(Board board, Boolean like, Long likes) {
             return detailResponse.builder()
                     .id(board.getId())
                     .userId(board.getUserId())
@@ -77,6 +78,7 @@ public class BoardDto {
                     .createAt(board.getCreateAt())
                     .updateAt(board.getUpdateAt())
                     .tag(board.getTag())
+                    .like(like)
                     .likes(likes)
                     .build();
         }

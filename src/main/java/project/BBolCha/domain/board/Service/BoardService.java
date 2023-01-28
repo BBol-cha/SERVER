@@ -27,8 +27,6 @@ import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Model.Status;
 
-import java.util.Optional;
-
 import static project.BBolCha.global.Model.Status.*;
 
 @Service
@@ -47,23 +45,12 @@ public class BoardService {
     @Transactional
     public ResponseEntity<BoardDto.Request> create(BoardDto.Request request) {
 
-        User user = userRepository.findByEmail(
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName()
-        ).orElseThrow(
-                NullPointerException::new
-        );
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NullPointerException::new);
 
         // 태그 카테고리에 없는거 추가
         for (String s : request.getTag()) {
             if (tagCategoryRepository.findByTag(s).isEmpty()) {
-                tagCategoryRepository.save(
-                        TagCategory.builder()
-                                .tag(s)
-                                .build()
-                );
+                tagCategoryRepository.save(TagCategory.builder().tag(s).build());
             }
         }
 
@@ -81,7 +68,6 @@ public class BoardService {
                         .hints(String.join(",", request.getHints()))
                         .build()
         );
-
         return new ResponseEntity<>(BoardDto.Request.Response(board), HttpStatus.CREATED);
 
     }
@@ -130,77 +116,54 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<BoardDto.detailResponse> readDetail(Long id) {
-        Optional<Board> board = boardRepository.findById(id);
+        Board note = boardRepository.findById(id).orElseThrow(NullPointerException::new);
 
-        Board note = board.orElseThrow(
-                NullPointerException::new
-        );
-        return new ResponseEntity<>(BoardDto.detailResponse.response(
-                boardRepository.save(
-                        Board.builder()
-                                .id(id)
-                                .userId(note.getUserId())
-                                .title(note.getTitle())
-                                .answer(note.getAnswer())
-                                .name(note.getName())
-                                .bimg(note.getBimg())
-                                .note(note.getNote())
-                                .views(note.getViews() + 1)
-                                .tag(note.getTag())
-                                .createAt(note.getCreateAt())
-                                .build()
-                ), likeRepository.countByBid(id)
+        return new ResponseEntity<>(BoardDto.detailResponse.response(note,
+                likeRepository.existsByBidAndEmail(id,
+                        SecurityContextHolder
+                                .getContext()
+                                .getAuthentication().getName()
+                ),
+                likeRepository.countByBid(id)
         ), HttpStatus.OK);
+
     }
 
     @Transactional
     public ResponseEntity<Comment> addComment(Long bid, CommentDto.Request request) {
-        User user = userRepository.findByEmail(
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName()
-        ).orElseThrow(
-                NullPointerException::new
-        );
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName()
+        ).orElseThrow(NullPointerException::new);
 
-        return new ResponseEntity<>(
-                commentRepository.save(
-                        Comment.builder()
-                                .bid(bid)
-                                .uid(user.getId())
-                                .name(user.getName())
-                                .note(request.getNote())
-                                .build()
-                ), HttpStatus.OK
-        );
+        return new ResponseEntity<>(commentRepository.save(
+                Comment.builder()
+                        .bid(bid)
+                        .uid(user.getId())
+                        .name(user.getName())
+                        .note(request.getNote()).build()
+        ), HttpStatus.OK);
     }
 
     // 댓글
 
     @Transactional
     public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
-        Pageable pageWithTenElements = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
-        return new ResponseEntity<>(commentRepository.findByBid(bid, pageWithTenElements), HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
+        return new ResponseEntity<>(commentRepository.findByBid(bid, pageable), HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<Status> update(Long id, BoardDto.Request request) {
         log.info(id.toString());
 
-        Board board = boardRepository.findById(id).orElseThrow(
-                NullPointerException::new
-        );
+        Board board = boardRepository.findById(id).orElseThrow(NullPointerException::new);
 
         String[] tag = request.getTag();
 
         for (String s : tag) {
             if (tagCategoryRepository.findByTag(s).isEmpty()) {
-                tagCategoryRepository.save(
-                        TagCategory.builder()
-                                .tag(s)
-                                .build()
-                );
+                tagCategoryRepository.save(TagCategory.builder().tag(s).build());
             }
         }
 
@@ -235,11 +198,7 @@ public class BoardService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if (likeRepository.existsByEmail(email)) {
             likeRepository.deleteByEmail(email);
-            return new ResponseEntity<>(
-                    BoardDto.Like.response(
-                            "cancel", "좋아요 취소"
-                    ), HttpStatus.OK
-            );
+            return new ResponseEntity<>(BoardDto.Like.response("cancel", "좋아요 취소"), HttpStatus.OK);
         }
 
         likeRepository.save(
@@ -249,11 +208,7 @@ public class BoardService {
                         .build()
         );
 
-        return new ResponseEntity<>(
-                BoardDto.Like.response(
-                        "add", "좋아요 등록"
-                ), HttpStatus.OK
-        );
+        return new ResponseEntity<>(BoardDto.Like.response("add", "좋아요 등록"), HttpStatus.OK);
     }
 
     public ResponseEntity<Status> deleteComment(Long id) {
