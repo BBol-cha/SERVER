@@ -196,7 +196,8 @@ public class BoardService {
     @Transactional
     public ResponseEntity<BoardDto.Like> addLike(Long bid) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (likeRepository.existsByEmail(email)) {
+
+        if (likeRepository.existsByBidAndEmail(bid,email)) {
             likeRepository.deleteByEmail(email);
             return new ResponseEntity<>(BoardDto.Like.response("cancel", "좋아요 취소"), HttpStatus.OK);
         }
