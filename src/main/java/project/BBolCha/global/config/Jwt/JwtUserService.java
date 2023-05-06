@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
-import project.BBolCha.global.Exception.CustomException;
 
 import java.util.List;
 import java.util.stream.Collectors;
