@@ -23,12 +23,14 @@ public class User {
 
     @Column(name = "name", nullable = false)
     private String name;
+
     @Column(name = "email", nullable = false, length = 500)
     private String email;
-    @Column(name = "pw", nullable = false, length = 700)
-    private String pw;
 
-    private String uimg;
+    @Column(name = "password", nullable = false, length = 700)
+    private String password;
+
+    private String profileImageUrl;
 
     @ManyToMany
     @JoinTable(
@@ -37,6 +39,5 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
 
-    private User() {
-    }
+    private User() {}
 }

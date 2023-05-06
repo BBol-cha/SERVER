@@ -1,80 +1,80 @@
 package project.BBolCha.domain.user.Dto;
 
-import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import project.BBolCha.domain.user.Entity.User;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class UserDto implements Serializable {
 
-    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
-    public static class register {
-        private final Long id;
-        private final String name;
-        private final String email;
-        private final String pw;
+    public static class RegistrationDto {
+        private String name;
+        private String email;
+        private String password;
     }
 
-    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
-    public static class registerResponse {
-        private final String name;
-        private final String email;
-        private final String atk;
-        private final String rtk;
-
-        public static registerResponse response(String name, String email, String atk, String rtk) {
-            return registerResponse.builder()
-                    .email(email)
-                    .name(name)
-                    .atk(atk)
-                    .rtk(rtk)
+    public static class AccessTokenRefreshDto {
+        private String accessToken;
+        public static AccessTokenRefreshDto response(String accessToken) {
+            return AccessTokenRefreshDto.builder()
+                    .accessToken(accessToken)
                     .build();
         }
     }
 
-    @Data
-    @Builder
-    public static class login {
-        private final String pw;
-        private final String email;
-    }
 
-    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
-    public static class reissue {
-        private final String pw;
-        private final String email;
-        private final String rtk;
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class LoginDto {
 
-    @Data
-    @Builder
-    public static class loginResponse {
-        private final String atk;
-        private final String rtk;
+        private Long id;
+        private String email;
+        private String name;
+        private String profileImageUrl;
+        private String password;
+        private String accessToken;
 
-        public static loginResponse response(String atk, String rtk) {
-            return loginResponse.builder()
-                    .atk(atk)
-                    .rtk(rtk)
+        public static LoginDto response(User user, String accessToken) {
+            return LoginDto.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .accessToken(accessToken)
                     .build();
         }
     }
 
-    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
     @Builder
-    public static class infoResponse {
+    public static class DetailDto {
 
-        private final String name;
-        private final String email;
+        private Long id;
+        private String email;
+        private String name;
+        private String profileImageUrl;
 
-        public static UserDto.infoResponse response(@NotNull String name, @NotNull String email) {
-            return UserDto.infoResponse.builder()
-                    .email(email)
-                    .name(name)
+        public static DetailDto response(User user) {
+            return DetailDto.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .profileImageUrl(user.getProfileImageUrl())
                     .build();
         }
     }

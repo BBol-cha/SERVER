@@ -9,16 +9,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.user.Dto.TokenInfoResponseDto;
 import project.BBolCha.domain.user.Dto.UserDto;
 import project.BBolCha.domain.user.Entity.Authority;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Exception.ServerException;
+import project.BBolCha.global.Model.Result;
 import project.BBolCha.global.Model.Status;
 import project.BBolCha.global.config.Jwt.SecurityUtil;
 import project.BBolCha.global.config.Jwt.TokenProvider;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 import static project.BBolCha.global.Exception.CustomErrorCode.*;
 import static project.BBolCha.global.Model.Status.LOGOUT_TRUE;
@@ -47,13 +49,7 @@ public class UserService {
     @Value("${jwt.token-validity-in-seconds}")
     long tokenValidityInSeconds;
 
-
-    Authority authority = Authority.builder()
-            .authorityName("ROLE_USER")
-            .build();
-
     // Validate 및 단순화 메소드
-
     private TokenInfoResponseDto getTokenInfo() {
         return TokenInfoResponseDto.Response(
                 Objects.requireNonNull(SecurityUtil.getCurrentUsername()
@@ -63,7 +59,7 @@ public class UserService {
         );
     }
 
-    private void LOGIN_VALIDATE(UserDto.login request) {
+    private void LOGIN_VALIDATE(UserDto.LoginDto request) {
         userRepository.findByEmail(request.getEmail())
                 .orElseThrow(
                         () -> new CustomException(LOGIN_FALSE)
@@ -86,78 +82,72 @@ public class UserService {
     // Service
     // 회원가입
     @Transactional
-    public ResponseEntity<UserDto.registerResponse> register(UserDto.register request, HttpServletResponse response) {
-        userRepository.save(
+    public UserDto.LoginDto register(UserDto.RegistrationDto request, HttpServletResponse response) {
+
+        User user = userRepository.save(
                 User.builder()
                         .name(request.getName())
                         .email(request.getEmail())
-                        .pw(passwordEncoder.encode(request.getPw()))
-                        .uimg("test.png")
-                        .authorities(Collections.singleton(authority))
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .profileImageUrl("test.png")
+                        .authorities(getAuthorities())
                         .build()
         );
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String atk = tokenProvider.createToken(authentication);
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
         String rtk = tokenProvider.createRefreshToken(request.getEmail());
+        setHttpOnlyCookie(response, rtk);
 
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
-
-        Cookie cookie = new Cookie("refreshToken", rtk);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-
-        return new ResponseEntity<>(UserDto.registerResponse.response(
-                request.getEmail(),
-                request.getName(),
-                atk,
-                "httponly"
-        ), HttpStatus.CREATED);
+        return UserDto.LoginDto.response(
+                user,
+                tokenProvider.createAccessToken(authentication)
+        );
     }
+
 
     //로그인
     @Transactional
-    public ResponseEntity<UserDto.loginResponse> login(UserDto.login request, HttpServletResponse response) {
+    public UserDto.LoginDto login(UserDto.LoginDto request, HttpServletResponse response) {
         LOGIN_VALIDATE(request);
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPw());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = getUser(request.getEmail());
+        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
 
-        String atk = tokenProvider.createToken(authentication);
-        String rtk = tokenProvider.createRefreshToken(request.getEmail());
+        setHttpOnlyCookie(response, refreshToken);
 
-        redisDao.setValues(request.getEmail(), rtk, Duration.ofDays(14));
+        return UserDto.LoginDto.response(
+                user,
+                tokenProvider.createAccessToken(authentication)
+        );
+    }
 
-        Cookie cookie = new Cookie("refreshToken", rtk);
+    private static void setHttpOnlyCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
-
-
-        return new ResponseEntity<>(UserDto.loginResponse.response(
-                atk,
-                "httponly"
-        ), HttpStatus.OK);
     }
+    private Authentication getAuthentication(String email, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
+    }
+
 
     // accessToken 재발급
     @Transactional
-    public ResponseEntity<UserDto.loginResponse> reissue(String rtk) {
-        String username = tokenProvider.getRefreshTokenInfo(rtk);
-        String rtkInRedis = redisDao.getValues(username);
+    public UserDto.AccessTokenRefreshDto reissue(String refreshToken) {
+        String email = tokenProvider.getRefreshTokenInfo(refreshToken);
+        String rtkInRedis = redisDao.getValues(email);
 
-        if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(rtk))
+        if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(refreshToken))
             throw new ServerException(REFRESH_TOKEN_IS_BAD_REQUEST); // 410
 
-        return new ResponseEntity<>(UserDto.loginResponse.response(
-                tokenProvider.reCreateToken(username),
-                "httponly"
-        ), HttpStatus.CREATED);
+        return UserDto.AccessTokenRefreshDto.response(
+                tokenProvider.reCreateToken(email)
+        );
     }
 
     // 정보 조회
@@ -170,8 +160,8 @@ public class UserService {
     }
 
     // 로그아웃
-    public ResponseEntity<Status> logout(String auth) {
-        String atk = auth.substring(7);
+    public ResponseEntity<Status> logout(String bearerToken, UserDetails userDetails) {
+        String accessToken = bearerToken.substring(7);
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -183,5 +173,17 @@ public class UserService {
                 tokenProvider.getExpiration(atk)
         ));
         return new ResponseEntity<>(LOGOUT_TRUE, HttpStatus.OK);
+    }
+
+    private Set<Authority> getAuthorities() {
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+        return Collections.singleton(authority);
+    }
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_USER)
+        );
     }
 }
