@@ -32,9 +32,6 @@ public class Comment extends BaseEntity{
     private Board board;
 
     @NotNull
-    private String name;
-
-    @NotNull
     private String note;
 
 }

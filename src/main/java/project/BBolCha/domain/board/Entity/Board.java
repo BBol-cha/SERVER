@@ -27,9 +27,6 @@ public class Board extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull
-    private String name;
-
     @Column(length = 65)
     @NotNull
     private String title;
