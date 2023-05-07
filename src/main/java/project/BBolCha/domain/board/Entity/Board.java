@@ -10,6 +10,7 @@ import project.BBolCha.domain.user.Entity.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -41,5 +42,14 @@ public class Board extends BaseEntity{
     private String contentImageUrl;
 
     private Integer viewCount;
+
+    @OneToMany(mappedBy = "board")
+    private List<Like> like;
+
+    @OneToOne(mappedBy = "board")
+    private Tag tag;
+
+    @OneToOne(mappedBy = "board")
+    private Hint hint;
 
 }
