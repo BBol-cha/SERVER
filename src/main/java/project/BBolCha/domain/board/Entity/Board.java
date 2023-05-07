@@ -30,17 +30,13 @@ public class Board extends BaseEntity{
     @NotNull
     private String name;
 
-    @Column(name = "title", length = 65)
+    @Column(length = 65)
     @NotNull
     private String title;
 
-    @Column(name = "content", length = 10000)
+    @Column(length = 10000)
     @NotNull
     private String content;
-
-    @Column(name = "views")
-    @NotNull
-    private Integer views;
 
     @NotNull
     private String correct;
@@ -50,4 +46,6 @@ public class Board extends BaseEntity{
     private String contentImageUrl;
 
     private String tag;
+
+    private Integer views;
 }
