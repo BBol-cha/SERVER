@@ -45,15 +45,17 @@ public class BoardController {
     public CustomResponseEntity<BoardDto.DetailDto> updateBoard(
             @PathVariable Long id, @RequestBody BoardDto.UpdateDto request
     ) {
-        return CustomResponseEntity.success(boardService.update(id, request));
+        return CustomResponseEntity.success(boardService.updateBoard(id, request));
     }
 
     // 게시글 삭제
+    // SoftDelete 또는 HardDelete 리팩터링 재필요
     @DeleteMapping("board/{id}")
-    public ResponseEntity<Status> delete(
-            @PathVariable Long id
+    public CustomResponseEntity<Void> deleteBoard(
+            @PathVariable Long id,
+            @AuthenticationPrincipal final UserDetails userDetails
     ) {
-        return boardService.delete(id);
+        return CustomResponseEntity.success(boardService.deleteBoard(id, userDetails));
     }
 
     // 게시글 페이지 조회

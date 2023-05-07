@@ -13,7 +13,8 @@ public enum Result {
     PASSWORD_NOT_MATCHED(-1, "존재하지 않는 사용자입니다."),
     NOT_FOUND_USER(-1, "존재하지 않는 사용자입니다."),
 
-    NOT_FOUND_BOARD(-1,"존재하지 않는 게시물입니다.");
+    NOT_FOUND_BOARD(-1,"존재하지 않는 게시물입니다."),
+    USER_EMAIL_MISMATCH(-1, "작성자와 현재 유저가 일치하지 않습니다.");
 
     private final int code;
     private final String message;

@@ -114,7 +114,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto.DetailDto update(Long id, BoardDto.UpdateDto request) {
+    public BoardDto.DetailDto updateBoard(Long id, BoardDto.UpdateDto request) {
         Board board = getBoard(id);
         board.updateBoard(request);
         TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
@@ -169,9 +169,17 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<Status> delete(Long id) {
-        boardRepository.deleteById(id);
-        return new ResponseEntity<>(BOARD_DELETE_TRUE, HttpStatus.OK);
+    public Void deleteBoard(Long id, UserDetails userDetails) {
+        Board board = getBoard(id);
+        String authorEmail = board.getUser().getEmail();
+        String email = userDetails.getUsername();
+
+        if (authorEmail != email) {
+            throw new CustomException(Result.USER_EMAIL_MISMATCH);
+        }
+
+        boardRepository.delete(board);
+        return null;
     }
 
     @Transactional
