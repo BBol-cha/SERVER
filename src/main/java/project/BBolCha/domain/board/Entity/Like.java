@@ -31,6 +31,4 @@ public class Like extends BaseEntity{
     @JoinColumn(name = "board_id")
     private Board board;
 
-
-
 }

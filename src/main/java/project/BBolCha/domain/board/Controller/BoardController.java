@@ -66,19 +66,14 @@ public class BoardController {
         return CustomResponseEntity.success(boardService.listSortedBoardsPerPage(page, limit, filter, arrange));
     }
 
-    // 이미지 업로드 해놓고 게시판 글작성 취소시 업로드 됐던 이미지 삭제
-    @DeleteMapping("board/image")
-    public ResponseEntity<Status> deleteImage(
-            @RequestBody BoardDto.boardImage request
-    ) throws IOException {
-        return boardService.deleteImage(request);
-    }
 
+    // 좋아요 등록 및 취소
     @PostMapping("board/like")
-    public ResponseEntity<BoardDto.Like> addLike(
-            @RequestParam("bid") Long bid
+    public CustomResponseEntity<BoardDto.LikeDto> toggleLike(
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal final UserDetails userDetails
     ) {
-        return boardService.addLike(bid);
+        return CustomResponseEntity.success(boardService.toggleLike(id, userDetails));
     }
 
 }

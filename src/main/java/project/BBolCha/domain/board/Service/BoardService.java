@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.Dto.BoardDto;
-import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Dto.HintDto;
 import project.BBolCha.domain.board.Dto.TagDto;
 import project.BBolCha.domain.board.Entity.*;
@@ -24,11 +23,11 @@ import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Model.Result;
-import project.BBolCha.global.Model.Status;
+
+import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
-import static project.BBolCha.global.Model.Status.COMMENT_DELETE_TRUE;
 
 @Service
 @Slf4j
@@ -125,6 +124,20 @@ public class BoardService {
     }
 
     @Transactional
+    public Void deleteBoard(Long id, UserDetails userDetails) {
+        Board board = getBoard(id);
+        String authorEmail = board.getUser().getEmail();
+        String email = userDetails.getUsername();
+
+        if (authorEmail != email) {
+            throw new CustomException(Result.USER_EMAIL_MISMATCH);
+        }
+
+        boardRepository.delete(board);
+        return null;
+    }
+
+    @Transactional
     public Page<BoardDto.DetailDto> listSortedBoardsPerPage(Integer page, Integer limit, String filter, String arrange) {
         /*
          Filter : 조회수 / 생성날짜 (views / createAt)
@@ -143,42 +156,25 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
-
-        amazonS3Client.deleteObject(bucket, "board/" + request.getImgName());
-        return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
-    }
-
-    @Transactional
-    public Void deleteBoard(Long id, UserDetails userDetails) {
+    public BoardDto.LikeDto toggleLike(Long id, UserDetails userDetails) {
+        User user = getUser(userDetails);
         Board board = getBoard(id);
-        String authorEmail = board.getUser().getEmail();
-        String email = userDetails.getUsername();
+        Optional<Like> likeOptional = likeRepository.findByBoardAndUser(board, user);
 
-        if (authorEmail != email) {
-            throw new CustomException(Result.USER_EMAIL_MISMATCH);
+        // 공감을 이미 했을 경우 취소
+        if (likeOptional.isPresent()) {
+            Like like = likeOptional.get();
+            likeRepository.delete(like);
+            return BoardDto.LikeDto.response(false);
         }
 
-        boardRepository.delete(board);
-        return null;
-    }
-
-    @Transactional
-    public ResponseEntity<BoardDto.Like> addLike(Long bid) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (likeRepository.existsByBidAndEmail(bid, email)) {
-            likeRepository.deleteByEmail(email);
-            return new ResponseEntity<>(BoardDto.Like.response("cancel", "좋아요 취소"), HttpStatus.OK);
-        }
-
+        // 공감을 하지 않은 경우 등록
         likeRepository.save(
                 Like.builder()
-                        .bid(bid)
-                        .email(SecurityContextHolder.getContext().getAuthentication().getName())
+                        .board(board)
+                        .user(user)
                         .build()
         );
-
-        return new ResponseEntity<>(BoardDto.Like.response("add", "좋아요 등록"), HttpStatus.OK);
+        return BoardDto.LikeDto.response(true);
     }
 }

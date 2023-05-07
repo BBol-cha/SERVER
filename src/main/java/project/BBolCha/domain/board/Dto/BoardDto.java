@@ -111,30 +111,12 @@ public class BoardDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class boardImage {
-        private String imgName;
-        private String bimg;
+    public static class LikeDto {
+        private Boolean isLiked;
 
-        public static BoardDto.boardImage response(String imgName, String url) {
-            return boardImage.builder()
-                    .imgName(imgName)
-                    .bimg(url)
-                    .build();
-        }
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class Like {
-        private String status;
-        private String statusMessage;
-
-        public static BoardDto.Like response(String status, String statusMessage) {
-            return Like.builder()
-                    .status(status)
-                    .statusMessage(statusMessage)
+        public static BoardDto.LikeDto response(Boolean isLiked) {
+            return LikeDto.builder()
+                    .isLiked(isLiked)
                     .build();
         }
     }
