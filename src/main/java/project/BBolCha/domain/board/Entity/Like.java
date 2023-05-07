@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Builder
 @DynamicUpdate
-public class Like extends BaseEntity{
+public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
