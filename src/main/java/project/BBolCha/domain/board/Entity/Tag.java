@@ -1,20 +1,26 @@
 package project.BBolCha.domain.board.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import project.BBolCha.domain.board.Dto.TagDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@Setter
 @Builder
 @DynamicUpdate
 @Entity
-public class Tag {
+public class Tag implements Serializable {
 
     @Id
+    private Long id;
+
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
@@ -28,6 +34,10 @@ public class Tag {
     private Boolean fantasy;
 
     private Boolean sf;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void updateTag(TagDto.DetailDto request) {
         this.horror = request.getHorror();
