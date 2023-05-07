@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Builder
 @Entity
-public class TagCategory {
+public class Tag {
 
     @Id
     @OneToOne(fetch = FetchType.LAZY)
