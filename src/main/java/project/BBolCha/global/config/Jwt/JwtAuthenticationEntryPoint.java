@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import project.BBolCha.global.Exception.CustomErrorResponse;
+import project.BBolCha.global.Model.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,17 +25,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        //Content-type : application/json;charset=utf-8
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        CustomErrorResponse error = new CustomErrorResponse();
-        error.setStatus(Authentication_Entry_Point);
-        error.setStatusMessage("토큰이 NULL 이거나 잘못된 AccessToken 입니다.");
-
-        // {"username":"loop-study", "age":20}
-        String result = objectMapper.writeValueAsString(error);
+        String result = objectMapper.writeValueAsString(Result.INVALID_ACCESS_TOKEN_CONSTANT);
         response.getWriter().write(result);
     }
 }

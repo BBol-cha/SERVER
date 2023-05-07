@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
+import project.BBolCha.global.Exception.CustomException;
+import project.BBolCha.global.Model.Result;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static project.BBolCha.global.Exception.CustomErrorCode.LOGIN_FALSE;
 
 @Service
 @Component("userDetailsService")
@@ -27,7 +27,7 @@ public class JwtUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String email) {
         return userRepository.findOneWithAuthoritiesByEmail(email)
                 .map(this::createUser)
-                .orElseThrow(() -> new CustomException(LOGIN_FALSE));
+                .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
     }
 
     private org.springframework.security.core.userdetails.User createUser(User user) {
@@ -36,7 +36,7 @@ public class JwtUserService implements UserDetailsService {
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
                 .collect(Collectors.toList());
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPw(),
+                user.getPassword(),
                 grantedAuthorities
         );
     }

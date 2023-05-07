@@ -123,7 +123,7 @@ public class UserService {
         String rtkInRedis = redisDao.getValues(email);
 
         if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(refreshToken))
-            throw new ServerException(REFRESH_TOKEN_IS_BAD_REQUEST); // 410
+            throw new CustomException(Result.INVALID_REFRESH_TOKEN_CONSTANT);
 
         return UserDto.AccessTokenRefreshDto.response(
                 tokenProvider.reCreateToken(email)
