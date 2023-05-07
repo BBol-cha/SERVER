@@ -60,18 +60,10 @@ public class BoardController {
 
     // 게시글 페이지 조회
     @GetMapping("board/list")
-    public CustomResponseEntity<Page<BoardDto.DetailDto>> read(
+    public CustomResponseEntity<Page<BoardDto.DetailDto>> listSortedBoardsPerPage(
             @RequestParam Integer page, @RequestParam Integer limit, @RequestParam String filter, @RequestParam String arrange
     ) {
-        return CustomResponseEntity.success(boardService.read(page, limit, filter, arrange));
-    }
-
-    // 게시글 댓글 조회
-    @GetMapping("board/list/comment")
-    public ResponseEntity<Page<Comment>> readComment(
-            @RequestParam("bid") Long bid, @RequestParam Integer page
-    ) {
-        return boardService.readComment(bid, page);
+        return CustomResponseEntity.success(boardService.listSortedBoardsPerPage(page, limit, filter, arrange));
     }
 
     // 이미지 업로드 해놓고 게시판 글작성 취소시 업로드 됐던 이미지 삭제
@@ -80,22 +72,6 @@ public class BoardController {
             @RequestBody BoardDto.boardImage request
     ) throws IOException {
         return boardService.deleteImage(request);
-    }
-
-    // 게시글 댓글 작성
-    @PostMapping("board/comment")
-    public ResponseEntity<Comment> addComment(
-            @RequestParam Long bid, @RequestBody CommentDto.Request request
-    ) {
-        return boardService.addComment(bid, request);
-    }
-
-    // 게시글 댓글 삭제
-    @DeleteMapping("board/comment")
-    public ResponseEntity<Status> deleteComment(
-            @RequestParam Long id
-    ) {
-        return boardService.deleteComment(id);
     }
 
     @PostMapping("board/like")

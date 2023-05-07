@@ -125,7 +125,7 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<BoardDto.DetailDto> read(Integer page, Integer limit, String filter, String arrange) {
+    public Page<BoardDto.DetailDto> listSortedBoardsPerPage(Integer page, Integer limit, String filter, String arrange) {
         /*
          Filter : 조회수 / 생성날짜 (views / createAt)
          arrange : 정렬방식
@@ -137,9 +137,9 @@ public class BoardService {
         return boardPage.map(board -> {
                     TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
                     HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
+
                     return BoardDto.DetailDto.response(board, tag, hint);
-                }
-        );
+        });
     }
 
     @Transactional
@@ -147,30 +147,6 @@ public class BoardService {
 
         amazonS3Client.deleteObject(bucket, "board/" + request.getImgName());
         return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<Comment> addComment(Long bid, CommentDto.Request request) {
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName()
-        ).orElseThrow(NullPointerException::new);
-
-        return new ResponseEntity<>(commentRepository.save(
-                Comment.builder()
-                        .bid(bid)
-                        .uid(user.getId())
-                        .name(user.getName())
-                        .note(request.getNote()).build()
-        ), HttpStatus.OK);
-    }
-
-    // 댓글
-
-    @Transactional
-    public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createAt");
-        return new ResponseEntity<>(commentRepository.findByBid(bid, pageable), HttpStatus.OK);
     }
 
     @Transactional
@@ -204,10 +180,5 @@ public class BoardService {
         );
 
         return new ResponseEntity<>(BoardDto.Like.response("add", "좋아요 등록"), HttpStatus.OK);
-    }
-
-    public ResponseEntity<Status> deleteComment(Long id) {
-        commentRepository.deleteById(id);
-        return new ResponseEntity<>(COMMENT_DELETE_TRUE, HttpStatus.OK);
     }
 }
