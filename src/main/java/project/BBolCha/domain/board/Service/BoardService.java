@@ -26,7 +26,8 @@ import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Model.Result;
 import project.BBolCha.global.Model.Status;
 
-import static project.BBolCha.global.Model.Status.BOARD_DELETE_TRUE;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static project.BBolCha.global.Model.Status.COMMENT_DELETE_TRUE;
 
 @Service
@@ -124,24 +125,28 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
-
-        amazonS3Client.deleteObject(bucket, "board/" + request.getImgName());
-        return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<Page<Board>> read(Integer page, Integer limit, String filter, String arrange) {
+    public Page<BoardDto.DetailDto> read(Integer page, Integer limit, String filter, String arrange) {
         /*
          Filter : 조회수 / 생성날짜 (views / createAt)
          arrange : 정렬방식
          */
-        if (arrange.equals("ASC")) {
-            Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.ASC, filter);
-            return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
-        }
-        Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, filter);
-        return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
+        Sort.Direction arrangeDirection = (arrange.equals("ASC")) ? ASC : DESC;
+        Pageable pageWithTenElements = PageRequest.of(page - 1, limit, arrangeDirection, filter);
+        Page<Board> boardPage = boardRepository.findAll(pageWithTenElements);
+
+        return boardPage.map(board -> {
+                    TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
+                    HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
+                    return BoardDto.DetailDto.response(board, tag, hint);
+                }
+        );
+    }
+
+    @Transactional
+    public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
+
+        amazonS3Client.deleteObject(bucket, "board/" + request.getImgName());
+        return new ResponseEntity<>(Status.IMAGE_DELETE_TRUE, HttpStatus.OK);
     }
 
     @Transactional
@@ -164,7 +169,7 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
-        Pageable pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
+        Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createAt");
         return new ResponseEntity<>(commentRepository.findByBid(bid, pageable), HttpStatus.OK);
     }
 
