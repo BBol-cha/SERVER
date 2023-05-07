@@ -40,6 +40,6 @@ public class Board extends BaseEntity{
 
     private String contentImageUrl;
 
-    private Integer views;
+    private Integer viewCount;
 
 }
