@@ -38,11 +38,8 @@ public class Board extends BaseEntity{
     @NotNull
     private String correct;
 
-    private String hint;
-
     private String contentImageUrl;
 
-    private String tag;
-
     private Integer views;
+
 }
