@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import project.BBolCha.domain.user.Entity.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,12 +22,18 @@ public class Comment extends BaseEntity{
     private Long id;
 
     @NotNull
-    private Long uid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @NotNull
-    private Long bid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     @NotNull
     private String name;
+
     @NotNull
     private String note;
 

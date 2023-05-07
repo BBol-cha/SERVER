@@ -1,30 +1,31 @@
 package project.BBolCha.domain.board.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@Setter
 @Builder
 @Entity
-@Table(name = "tag_category")
-@EntityListeners(AuditingEntityListener.class)
 public class TagCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @NotNull
-    private String tag;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
-    private TagCategory() {
-    }
+    private Boolean horror;
+
+    private Boolean daily;
+
+    private Boolean romance;
+
+    private Boolean fantasy;
+
+    private Boolean sf;
 }

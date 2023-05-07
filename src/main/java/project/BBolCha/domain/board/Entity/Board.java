@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Entity
 @DynamicUpdate
 public class Board extends BaseEntity{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,7 +45,6 @@ public class Board extends BaseEntity{
     @NotNull
     private String correct;
 
-    @Column(name = "hint")
     private String hint;
 
     private String contentImageUrl;
