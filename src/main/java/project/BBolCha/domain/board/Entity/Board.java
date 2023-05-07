@@ -5,6 +5,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import project.BBolCha.domain.board.Dto.BoardDto;
+import project.BBolCha.domain.board.Dto.HintDto;
 import project.BBolCha.domain.user.Entity.User;
 
 import javax.persistence.*;
@@ -52,4 +54,13 @@ public class Board extends BaseEntity{
     @OneToOne(mappedBy = "board")
     private Hint hint;
 
+    public void updateBoard(BoardDto.UpdateDto request) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.correct = request.getCorrect();
+        this.contentImageUrl = request.getContentImageUrl();
+
+        this.tag.updateTag(request.getTag());
+        this.hint.updateHint(request.getHint());
+    }
 }

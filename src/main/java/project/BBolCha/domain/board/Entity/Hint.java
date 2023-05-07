@@ -1,6 +1,8 @@
 package project.BBolCha.domain.board.Entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import project.BBolCha.domain.board.Dto.HintDto;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +13,7 @@ import javax.persistence.OneToOne;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Builder
+@DynamicUpdate
 @Entity
 public class Hint {
 
@@ -27,4 +30,12 @@ public class Hint {
     private String hintFour;
 
     private String hintFive;
+
+    public void updateHint(HintDto.DetailDto request) {
+        this.hintOne = request.getHintOne();
+        this.hintTwo = request.getHintTwo();
+        this.hintThree = request.getHintThree();
+        this.hintFour = request.getHintFour();
+        this.hintFive = request.getHintFive();
+    }
 }

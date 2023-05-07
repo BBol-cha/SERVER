@@ -25,27 +25,27 @@ public class BoardController {
 
     // 게시글 생성
     @PostMapping("board")
-    public CustomResponseEntity<BoardDto.SaveDto> create(
+    public CustomResponseEntity<BoardDto.SaveDto> createBoard(
             @RequestBody BoardDto.SaveDto request,
             @AuthenticationPrincipal UserDetails userDetails
             ) {
-        return CustomResponseEntity.success(boardService.create(request, userDetails));
+        return CustomResponseEntity.success(boardService.createBoard(request, userDetails));
     }
 
     // 게시글 상세 조회
     @GetMapping("board/list/{id}")
-    public CustomResponseEntity<BoardDto.DetailDto> readDetail(
+    public CustomResponseEntity<BoardDto.DetailDto> findBoard(
             @PathVariable("id") Long id
     ) {
-        return CustomResponseEntity.success(boardService.readDetail(id));
+        return CustomResponseEntity.success(boardService.findBoard(id));
     }
 
     // 게시글 수정
     @PatchMapping("board/{id}")
-    public ResponseEntity<Status> update(
-            @PathVariable Long id, @RequestBody BoardDto.Request request
+    public CustomResponseEntity<BoardDto.DetailDto> updateBoard(
+            @PathVariable Long id, @RequestBody BoardDto.UpdateDto request
     ) {
-        return boardService.update(id, request);
+        return CustomResponseEntity.success(boardService.update(id, request));
     }
 
     // 게시글 삭제

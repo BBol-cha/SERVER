@@ -26,7 +26,8 @@ import project.BBolCha.global.Exception.CustomException;
 import project.BBolCha.global.Model.Result;
 import project.BBolCha.global.Model.Status;
 
-import static project.BBolCha.global.Model.Status.*;
+import static project.BBolCha.global.Model.Status.BOARD_DELETE_TRUE;
+import static project.BBolCha.global.Model.Status.COMMENT_DELETE_TRUE;
 
 @Service
 @Slf4j
@@ -77,8 +78,14 @@ public class BoardService {
         return HintDto.DetailDto.response(hint);
     }
 
+    private Board getBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_BOARD)
+        );
+    }
+
     @Transactional
-    public BoardDto.SaveDto create(BoardDto.SaveDto request, UserDetails userDetails) {
+    public BoardDto.SaveDto createBoard(BoardDto.SaveDto request, UserDetails userDetails) {
         User user = getUser(userDetails);
 
         Board board = boardRepository.save(
@@ -98,12 +105,22 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto.DetailDto readDetail(Long id) {
+    public BoardDto.DetailDto findBoard(Long id) {
         Board board = getBoard(id);
         TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
         HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
 
-        return BoardDto.DetailDto.response(board,tag,hint);
+        return BoardDto.DetailDto.response(board, tag, hint);
+    }
+
+    @Transactional
+    public BoardDto.DetailDto update(Long id, BoardDto.UpdateDto request) {
+        Board board = getBoard(id);
+        board.updateBoard(request);
+        TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
+        HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
+
+        return BoardDto.DetailDto.response(board, tag, hint);
     }
 
     @Transactional
@@ -125,12 +142,6 @@ public class BoardService {
         }
         Pageable pageWithTenElements = PageRequest.of(page - 1, limit, Sort.Direction.DESC, filter);
         return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
-    }
-
-    private Board getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_BOARD)
-        );
     }
 
     @Transactional
@@ -155,40 +166,6 @@ public class BoardService {
     public ResponseEntity<Page<Comment>> readComment(Long bid, Integer page) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "createAt");
         return new ResponseEntity<>(commentRepository.findByBid(bid, pageable), HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<Status> update(Long id, BoardDto.Request request) {
-        log.info(id.toString());
-
-        Board board = boardRepository.findById(id).orElseThrow(NullPointerException::new);
-
-        String[] tag = request.getTag();
-
-        for (String s : tag) {
-            if (tagRepository.findByTag(s).isEmpty()) {
-                tagRepository.save(Tag.builder().tag(s).build());
-            }
-        }
-
-        String strArrayToString = String.join(",", tag); // 문자열 배열을 Join
-
-        boardRepository.save(
-                Board.builder()
-                        .id(id)
-                        .userId(board.getUserId())
-                        .title(request.getTitle())
-                        .answer(request.getAnswer())
-                        .name(board.getName())
-                        .bimg(request.getBimg())
-                        .note(request.getNote())
-                        .views(board.getViews())
-                        .tag(strArrayToString)
-                        .createAt(board.getCreateAt())
-                        .build()
-        );
-
-        return new ResponseEntity<>(BOARD_UPDATE_TRUE, HttpStatus.OK);
     }
 
     @Transactional
