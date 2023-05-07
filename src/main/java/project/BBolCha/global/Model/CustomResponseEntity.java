@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.BBolCha.domain.user.Dto.UserDto;
 
 @Getter
 @Setter
@@ -16,9 +17,6 @@ public class CustomResponseEntity<T> {
     private T data;
 
     public static <T> CustomResponseEntity<T> success(T data) {
-        if (data == null) {
-            data = (T) new Object();
-        }
         return CustomResponseEntity.<T>builder()
                 .code(Result.OK.getCode())
                 .message(Result.OK.getMessage())
