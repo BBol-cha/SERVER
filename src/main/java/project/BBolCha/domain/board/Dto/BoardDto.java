@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.BBolCha.domain.board.Entity.Board;
+import project.BBolCha.domain.board.Entity.Hint;
+import project.BBolCha.domain.board.Entity.Tag;
 import project.BBolCha.domain.user.Entity.User;
 
 import java.time.LocalDateTime;
@@ -29,13 +31,10 @@ public class BoardDto {
         private TagDto.DetailDto tag;
         private HintDto.DetailDto hint;
 
-        public static BoardDto.SaveDto response(
-                Board board, User user,
-                TagDto.DetailDto tag, HintDto.DetailDto hint
-        ) {
+        public static BoardDto.SaveDto response(Board board) {
             return SaveDto.builder()
                     .id(board.getId())
-                    .authorName(user.getName())
+                    .authorName(board.getUser().getName())
                     .title(board.getTitle())
                     .content(board.getContent())
                     .correct(board.getCorrect())
@@ -44,8 +43,8 @@ public class BoardDto {
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
-                    .tag(tag)
-                    .hint(hint)
+                    .tag(TagDto.DetailDto.response(board.getTag()))
+                    .hint(HintDto.DetailDto.response(board.getHint()))
                     .build();
         }
     }
@@ -68,9 +67,7 @@ public class BoardDto {
         private TagDto.DetailDto tag;
         private HintDto.DetailDto hint;
 
-        public static BoardDto.DetailDto response(
-                Board board, TagDto.DetailDto tag, HintDto.DetailDto hint
-        ) {
+        public static BoardDto.DetailDto response(Board board) {
             return DetailDto.builder()
                     .id(board.getId())
                     .authorName(board.getUser().getName())
@@ -82,8 +79,8 @@ public class BoardDto {
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
-                    .tag(tag)
-                    .hint(hint)
+                    .tag(TagDto.DetailDto.response(board.getTag()))
+                    .hint(HintDto.DetailDto.response(board.getHint()))
                     .build();
         }
     }

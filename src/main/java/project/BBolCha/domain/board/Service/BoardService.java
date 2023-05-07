@@ -8,16 +8,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.HintDto;
 import project.BBolCha.domain.board.Dto.TagDto;
-import project.BBolCha.domain.board.Entity.*;
+import project.BBolCha.domain.board.Entity.Board;
+import project.BBolCha.domain.board.Entity.Hint;
+import project.BBolCha.domain.board.Entity.Like;
+import project.BBolCha.domain.board.Entity.Tag;
 import project.BBolCha.domain.board.Repository.*;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
@@ -50,34 +50,6 @@ public class BoardService {
         );
     }
 
-    private TagDto.DetailDto saveTagAndGetDetailDto(BoardDto.SaveDto request, Board board) {
-        Tag tag = tagRepository.save(
-                Tag.builder()
-                        .board(board)
-                        .horror(request.getTag().getHorror())
-                        .daily(request.getTag().getDaily())
-                        .romance(request.getTag().getRomance())
-                        .fantasy(request.getTag().getFantasy())
-                        .sf(request.getTag().getSf())
-                        .build()
-        );
-        return TagDto.DetailDto.response(tag);
-    }
-
-    private HintDto.DetailDto saveHintAndGetDetailDto(BoardDto.SaveDto request, Board board) {
-        Hint hint = hintRepository.save(
-                Hint.builder()
-                        .board(board)
-                        .hintOne(request.getHint().getHintOne())
-                        .hintTwo(request.getHint().getHintTwo())
-                        .hintThree(request.getHint().getHintThree())
-                        .hintFour(request.getHint().getHintFour())
-                        .hintFive(request.getHint().getHintFive())
-                        .build()
-        );
-        return HintDto.DetailDto.response(hint);
-    }
-
     private Board getBoard(Long id) {
         return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(Result.NOT_FOUND_BOARD)
@@ -87,6 +59,22 @@ public class BoardService {
     @Transactional
     public BoardDto.SaveDto createBoard(BoardDto.SaveDto request, UserDetails userDetails) {
         User user = getUser(userDetails);
+
+        Tag tag = Tag.builder()
+                .horror(request.getTag().getHorror())
+                .daily(request.getTag().getDaily())
+                .romance(request.getTag().getRomance())
+                .fantasy(request.getTag().getFantasy())
+                .sf(request.getTag().getSf())
+                .build();
+
+        Hint hint = Hint.builder()
+                .hintOne(request.getHint().getHintOne())
+                .hintTwo(request.getHint().getHintTwo())
+                .hintThree(request.getHint().getHintThree())
+                .hintFour(request.getHint().getHintFour())
+                .hintFive(request.getHint().getHintFive())
+                .build();
 
         Board board = boardRepository.save(
                 Board.builder()
@@ -98,29 +86,25 @@ public class BoardService {
                         .viewCount(0)
                         .build()
         );
-        TagDto.DetailDto tag = saveTagAndGetDetailDto(request, board);
-        HintDto.DetailDto hint = saveHintAndGetDetailDto(request, board);
 
-        return BoardDto.SaveDto.response(board, user, tag, hint);
+        board.saveTagAndHint(tag, hint);
+
+        return BoardDto.SaveDto.response(board);
     }
 
     @Transactional
     public BoardDto.DetailDto findBoard(Long id) {
         Board board = getBoard(id);
-        TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
-        HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
 
-        return BoardDto.DetailDto.response(board, tag, hint);
+        return BoardDto.DetailDto.response(board);
     }
 
     @Transactional
     public BoardDto.DetailDto updateBoard(Long id, BoardDto.UpdateDto request) {
         Board board = getBoard(id);
         board.updateBoard(request);
-        TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
-        HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
 
-        return BoardDto.DetailDto.response(board, tag, hint);
+        return BoardDto.DetailDto.response(board);
     }
 
     @Transactional
@@ -147,12 +131,7 @@ public class BoardService {
         Pageable pageWithTenElements = PageRequest.of(page - 1, limit, arrangeDirection, filter);
         Page<Board> boardPage = boardRepository.findAll(pageWithTenElements);
 
-        return boardPage.map(board -> {
-                    TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
-                    HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
-
-                    return BoardDto.DetailDto.response(board, tag, hint);
-        });
+        return boardPage.map(BoardDto.DetailDto::response);
     }
 
     @Transactional

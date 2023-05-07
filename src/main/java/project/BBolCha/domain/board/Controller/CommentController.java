@@ -2,15 +2,12 @@ package project.BBolCha.domain.board.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.board.Dto.CommentDto;
-import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.CommentService;
 import project.BBolCha.global.Model.CustomResponseEntity;
-import project.BBolCha.global.Model.Status;
 
 @RestController
 @RequiredArgsConstructor
