@@ -55,7 +55,7 @@ public class UserController {
 
     // 로그아웃
     @DeleteMapping("auth/logout")
-    public CustomResponseEntity<Status> logout(
+    public CustomResponseEntity<Void> logout(
             @RequestHeader(value = "Authorization") String bearerToken,
             @AuthenticationPrincipal UserDetails userDetails
             ) {
@@ -64,8 +64,9 @@ public class UserController {
 
     // 정보 조회
     @GetMapping("auth/info")
-    public ResponseEntity<UserDto.infoResponse> read(
+    public CustomResponseEntity<UserDto.DetailDto> read(
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return userService.read();
+        return CustomResponseEntity.success(userService.read(userDetails));
     }
 }

@@ -3,8 +3,6 @@ package project.BBolCha.domain.user.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -18,10 +16,7 @@ import project.BBolCha.domain.user.Entity.Authority;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Exception.CustomException;
-import project.BBolCha.global.Exception.ServerException;
 import project.BBolCha.global.Model.Result;
-import project.BBolCha.global.Model.Status;
-import project.BBolCha.global.config.Jwt.SecurityUtil;
 import project.BBolCha.global.config.Jwt.TokenProvider;
 import project.BBolCha.global.config.RedisDao;
 
@@ -32,8 +27,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import static project.BBolCha.global.Exception.CustomErrorCode.*;
-import static project.BBolCha.global.Model.Status.LOGOUT_TRUE;
+import static project.BBolCha.global.Exception.CustomErrorCode.REFRESH_TOKEN_IS_BAD_REQUEST;
 
 
 @Service
@@ -49,38 +43,41 @@ public class UserService {
     @Value("${jwt.token-validity-in-seconds}")
     long tokenValidityInSeconds;
 
-    // Validate 및 단순화 메소드
-    private TokenInfoResponseDto getTokenInfo() {
-        return TokenInfoResponseDto.Response(
-                Objects.requireNonNull(SecurityUtil.getCurrentUsername()
-                        .flatMap(
-                                userRepository::findOneWithAuthoritiesByEmail)
-                        .orElse(null))
+    private static void setHttpOnlyCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_USER)
         );
     }
 
-    private void LOGIN_VALIDATE(UserDto.LoginDto request) {
-        userRepository.findByEmail(request.getEmail())
-                .orElseThrow(
-                        () -> new CustomException(LOGIN_FALSE)
-                );
+    private Set<Authority> getAuthorities() {
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+        return Collections.singleton(authority);
+    }
 
-        if (request.getPw().equals("kakao"))
-            throw new CustomException(NOT_SOCIAL_LOGIN);
+    private Authentication getAuthentication(String email, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        if (!passwordEncoder.matches(
-                request.getPw(),
-                userRepository.findByEmail(request.getEmail())
-                        .orElseThrow(
-                                () -> new CustomException(LOGIN_FALSE)
-                        ).getPw())
-        ) {
-            throw new CustomException(LOGIN_FALSE);
+        return authentication;
+    }
+
+    private void LOGIN_VALIDATE(UserDto.LoginDto request, User user) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new CustomException(Result.PASSWORD_NOT_MATCHED);
         }
     }
 
     // Service
-    // 회원가입
     @Transactional
     public UserDto.LoginDto register(UserDto.RegistrationDto request, HttpServletResponse response) {
 
@@ -104,13 +101,11 @@ public class UserService {
         );
     }
 
-
-    //로그인
     @Transactional
     public UserDto.LoginDto login(UserDto.LoginDto request, HttpServletResponse response) {
-        LOGIN_VALIDATE(request);
-
         User user = getUser(request.getEmail());
+        LOGIN_VALIDATE(request, user);
+
         Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
         String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
 
@@ -122,21 +117,6 @@ public class UserService {
         );
     }
 
-    private static void setHttpOnlyCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-    }
-    private Authentication getAuthentication(String email, String password) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return authentication;
-    }
-
-
-    // accessToken 재발급
     @Transactional
     public UserDto.AccessTokenRefreshDto reissue(String refreshToken) {
         String email = tokenProvider.getRefreshTokenInfo(refreshToken);
@@ -150,40 +130,26 @@ public class UserService {
         );
     }
 
-    // 정보 조회
-    public ResponseEntity<UserDto.infoResponse> read() {
-        TokenInfoResponseDto userInfo = getTokenInfo();
-        return new ResponseEntity<>(UserDto.infoResponse.builder()
-                .email(userInfo.getEmail())
-                .name(userInfo.getName())
-                .build(), HttpStatus.OK);
+    @Transactional
+    public UserDto.DetailDto read(UserDetails userDetails) {
+        User user = getUser(userDetails.getUsername());
+        return UserDto.DetailDto.response(user);
     }
 
-    // 로그아웃
-    public ResponseEntity<Status> logout(String bearerToken, UserDetails userDetails) {
+    @Transactional
+    public Void logout(String bearerToken, UserDetails userDetails) {
         String accessToken = bearerToken.substring(7);
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-        if (redisDao.getValues(email) != null) {
-            redisDao.deleteValues(email);
+        Long accessTokenExpiration = tokenProvider.getExpiration(accessToken);
+        String email = userDetails.getUsername();
+
+        if (redisDao.getValues(email) == null || redisDao.getValues(email).isEmpty()) {
+            throw new CustomException(Result.FAIL);
         }
 
-        redisDao.setValues(atk, "logout", Duration.ofMillis(
-                tokenProvider.getExpiration(atk)
-        ));
-        return new ResponseEntity<>(LOGOUT_TRUE, HttpStatus.OK);
+        redisDao.deleteValues(email);
+        redisDao.setValues(accessToken, "logout", Duration.ofMillis(accessTokenExpiration));
+
+        return null;
     }
 
-    private Set<Authority> getAuthorities() {
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-        return Collections.singleton(authority);
-    }
-    private User getUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_USER)
-        );
-    }
 }

@@ -8,6 +8,7 @@ public enum Result {
     OK(0,"성공"),
     FAIL(-1,"실패"),
 
+    PASSWORD_NOT_MATCHED(-1, "존재하지 않는 사용자입니다."),
     NOT_FOUND_USER(-1, "존재하지 않는 사용자입니다.");
 
     private final int code;

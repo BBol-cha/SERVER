@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
-import project.Default.global.Model.CustomResponseEntity;
+import project.BBolCha.global.Model.CustomResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
