@@ -11,7 +11,9 @@ public enum Result {
     INVALID_REFRESH_TOKEN_CONSTANT(-1,"토큰이 NULL 또는 잘못된 RefreshToken 입니다."),
 
     PASSWORD_NOT_MATCHED(-1, "존재하지 않는 사용자입니다."),
-    NOT_FOUND_USER(-1, "존재하지 않는 사용자입니다.");
+    NOT_FOUND_USER(-1, "존재하지 않는 사용자입니다."),
+
+    NOT_FOUND_BOARD(-1,"존재하지 않는 게시물입니다.");
 
     private final int code;
     private final String message;

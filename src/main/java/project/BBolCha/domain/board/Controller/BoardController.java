@@ -32,6 +32,14 @@ public class BoardController {
         return CustomResponseEntity.success(boardService.create(request, userDetails));
     }
 
+    // 게시글 상세 조회
+    @GetMapping("board/list/{id}")
+    public CustomResponseEntity<BoardDto.DetailDto> readDetail(
+            @PathVariable("id") Long id
+    ) {
+        return CustomResponseEntity.success(boardService.readDetail(id));
+    }
+
     // 게시글 수정
     @PatchMapping("board/{id}")
     public ResponseEntity<Status> update(
@@ -54,14 +62,6 @@ public class BoardController {
             @RequestParam Integer page, @RequestParam Integer limit, @RequestParam String filter, @RequestParam String arrange
     ) {
         return boardService.read(page, limit, filter, arrange);
-    }
-
-    // 게시글 상세 조회
-    @GetMapping("board/list/{id}")
-    public ResponseEntity<BoardDto.detailResponse> readDetail(
-            @PathVariable("id") Long id
-    ) {
-        return boardService.readDetail(id);
     }
 
     // 게시글 댓글 조회

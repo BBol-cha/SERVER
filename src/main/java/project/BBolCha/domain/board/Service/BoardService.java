@@ -79,9 +79,8 @@ public class BoardService {
 
     @Transactional
     public BoardDto.SaveDto create(BoardDto.SaveDto request, UserDetails userDetails) {
-
         User user = getUser(userDetails);
-        
+
         Board board = boardRepository.save(
                 Board.builder()
                         .user(user)
@@ -96,6 +95,15 @@ public class BoardService {
         HintDto.DetailDto hint = saveHintAndGetDetailDto(request, board);
 
         return BoardDto.SaveDto.response(board, user, tag, hint);
+    }
+
+    @Transactional
+    public BoardDto.DetailDto readDetail(Long id) {
+        Board board = getBoard(id);
+        TagDto.DetailDto tag = TagDto.DetailDto.response(board.getTag());
+        HintDto.DetailDto hint = HintDto.DetailDto.response(board.getHint());
+
+        return BoardDto.DetailDto.response(board,tag,hint);
     }
 
     @Transactional
@@ -119,19 +127,10 @@ public class BoardService {
         return new ResponseEntity<>(boardRepository.findAll(pageWithTenElements), HttpStatus.OK);
     }
 
-    @Transactional
-    public ResponseEntity<BoardDto.detailResponse> readDetail(Long id) {
-        Board note = boardRepository.findById(id).orElseThrow(NullPointerException::new);
-
-        return new ResponseEntity<>(BoardDto.detailResponse.response(note,
-                likeRepository.existsByBidAndEmail(id,
-                        SecurityContextHolder
-                                .getContext()
-                                .getAuthentication().getName()
-                ),
-                likeRepository.countByBid(id)
-        ), HttpStatus.OK);
-
+    private Board getBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_BOARD)
+        );
     }
 
     @Transactional

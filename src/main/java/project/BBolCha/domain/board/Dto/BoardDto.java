@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.user.Entity.User;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 
 public class BoardDto {
@@ -55,36 +54,36 @@ public class BoardDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class detailResponse {
+    public static class DetailDto {
         private Long id;
-        private Long userId;
-        private String name;
+        private String authorName;
         private String title;
-        private String note;
-        private Integer views;
-        private String answer;
-        private String bimg;
-        private LocalDateTime createAt;
-        private LocalDateTime updateAt;
-        private String tag;
-        private Boolean like;
-        private Long likes;
+        private String content;
+        private String correct;
+        private String contentImageUrl;
+        private Integer likeCount;
+        private Integer viewCount;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private TagDto.DetailDto tag;
+        private HintDto.DetailDto hint;
 
-        public static BoardDto.detailResponse response(Board board, Boolean like, Long likes) {
-            return detailResponse.builder()
+        public static BoardDto.DetailDto response(
+                Board board, TagDto.DetailDto tag, HintDto.DetailDto hint
+        ) {
+            return DetailDto.builder()
                     .id(board.getId())
-                    .userId(board.getUserId())
-                    .name(board.getName())
+                    .authorName(board.getUser().getName())
                     .title(board.getTitle())
-                    .bimg(board.getBimg())
-                    .views(board.getViews())
-                    .note(board.getNote())
-                    .answer(board.getAnswer())
-                    .createAt(board.getCreateAt())
-                    .updateAt(board.getUpdateAt())
-                    .tag(board.getTag())
-                    .like(like)
-                    .likes(likes)
+                    .content(board.getContent())
+                    .correct(board.getCorrect())
+                    .contentImageUrl(board.getContentImageUrl())
+                    .likeCount(board.getLike().size())
+                    .viewCount(board.getViewCount())
+                    .createdAt(board.getCreatedAt())
+                    .updatedAt(board.getUpdatedAt())
+                    .tag(tag)
+                    .hint(hint)
                     .build();
         }
     }
