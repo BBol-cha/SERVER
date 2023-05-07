@@ -1,70 +1,55 @@
 package project.BBolCha.domain.board.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import project.BBolCha.domain.user.Entity.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@Setter
 @Builder
 @Entity
-@Table(name = "board")
 @DynamicUpdate
-@EntityListeners(AuditingEntityListener.class)
-public class Board {
+public class Board extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "uid")
     @NotNull
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
     private String name;
+
     @Column(name = "title", length = 65)
     @NotNull
     private String title;
 
-    @Column(name = "note", length = 10000)
+    @Column(name = "content", length = 10000)
     @NotNull
-    private String note;
+    private String content;
+
     @Column(name = "views")
     @NotNull
     private Integer views;
 
-    @Column(name = "answer")
     @NotNull
-    private String answer;
+    private String correct;
 
-    @Column(name = "hints")
-    private String hints;
+    @Column(name = "hint")
+    private String hint;
 
-    private String bimg;
+    private String contentImageUrl;
 
     private String tag;
-
-    @Column(name = "create_at")
-    @CreatedDate
-    @NotNull
-    private LocalDateTime createAt;
-
-    @Column(name = "update_at")
-    @LastModifiedDate
-    @NotNull
-    private LocalDateTime updateAt;
-
-    private Board() {
-    }
 }
