@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.BoardService;
+import project.BBolCha.global.Model.CustomResponseEntity;
 import project.BBolCha.global.Model.Status;
 
 import java.io.IOException;
@@ -22,10 +25,11 @@ public class BoardController {
 
     // 게시글 생성
     @PostMapping("board")
-    public ResponseEntity<BoardDto.Request> create(
-            @RequestBody BoardDto.Request request
-    ) {
-        return boardService.create(request);
+    public CustomResponseEntity<BoardDto.SaveDto> create(
+            @RequestBody BoardDto.SaveDto request,
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+        return CustomResponseEntity.success(boardService.create(request, userDetails));
     }
 
     // 게시글 수정
@@ -67,17 +71,6 @@ public class BoardController {
     ) {
         return boardService.readComment(bid, page);
     }
-
-/*    // 게시판 이미지 업로드
-    @PostMapping("board/image")
-    public ResponseEntity<BoardDto.boardImage> putImage(
-            @RequestParam("file") MultipartFile multipartFile
-    ) throws IOException {
-        log.info("#################");
-        log.info(multipartFile.getName());
-        log.info("#################");
-        return boardService.putImage(multipartFile);
-    }*/
 
     // 이미지 업로드 해놓고 게시판 글작성 취소시 업로드 됐던 이미지 삭제
     @DeleteMapping("board/image")

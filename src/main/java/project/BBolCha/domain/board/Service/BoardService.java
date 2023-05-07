@@ -11,20 +11,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.Dto.BoardDto;
 import project.BBolCha.domain.board.Dto.CommentDto;
-import project.BBolCha.domain.board.Entity.Board;
-import project.BBolCha.domain.board.Entity.Comment;
-import project.BBolCha.domain.board.Entity.Like;
-import project.BBolCha.domain.board.Entity.TagCategory;
-import project.BBolCha.domain.board.Repository.BoardRepository;
-import project.BBolCha.domain.board.Repository.CommentRepository;
-import project.BBolCha.domain.board.Repository.LikeRepository;
-import project.BBolCha.domain.board.Repository.TagCategoryRepository;
+import project.BBolCha.domain.board.Dto.HintDto;
+import project.BBolCha.domain.board.Dto.TagDto;
+import project.BBolCha.domain.board.Entity.*;
+import project.BBolCha.domain.board.Repository.*;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
+import project.BBolCha.global.Exception.CustomException;
+import project.BBolCha.global.Model.Result;
 import project.BBolCha.global.Model.Status;
 
 import static project.BBolCha.global.Model.Status.*;
@@ -35,63 +34,69 @@ import static project.BBolCha.global.Model.Status.*;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final TagCategoryRepository tagCategoryRepository;
+    private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final HintRepository hintRepository;
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Transactional
-    public ResponseEntity<BoardDto.Request> create(BoardDto.Request request) {
-
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NullPointerException::new);
-
-        // 태그 카테고리에 없는거 추가
-        for (String s : request.getTag()) {
-            if (tagCategoryRepository.findByTag(s).isEmpty()) {
-                tagCategoryRepository.save(TagCategory.builder().tag(s).build());
-            }
-        }
-
-
-        Board board = boardRepository.save(
-                Board.builder()
-                        .userId(user.getId())
-                        .title(request.getTitle())
-                        .answer(request.getAnswer())
-                        .name(user.getName())
-                        .bimg(request.getBimg())
-                        .note(request.getNote())
-                        .views(0)
-                        .tag(String.join(",", request.getTag())) // 배열을 String으로 전환
-                        .hints(String.join(",", request.getHints()))
-                        .build()
+    private User getUser(UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_USER)
         );
-        return new ResponseEntity<>(BoardDto.Request.Response(board), HttpStatus.CREATED);
-
     }
 
-/*    @Transactional
-    public ResponseEntity<BoardDto.boardImage> putImage(MultipartFile multipartFile) throws IOException {
-        log.info("$$$$$$$$$$$$$$$$$$$");
-        log.info(multipartFile.getName());
-        log.info("$$$$$$$$$$$$$$$$$$$");
-        UUID uuid = UUID.randomUUID();
-        String imageName = "board/" + uuid;
-        ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(multipartFile.getInputStream().available());
-        amazonS3Client.putObject(bucket, imageName, multipartFile.getInputStream(), objMeta);
+    private TagDto.DetailDto saveTagAndGetDetailDto(BoardDto.SaveDto request, Board board) {
+        Tag tag = tagRepository.save(
+                Tag.builder()
+                        .board(board)
+                        .horror(request.getTag().getHorror())
+                        .daily(request.getTag().getDaily())
+                        .romance(request.getTag().getRomance())
+                        .fantasy(request.getTag().getFantasy())
+                        .sf(request.getTag().getSf())
+                        .build()
+        );
+        return TagDto.DetailDto.response(tag);
+    }
 
-        log.info("%%%%%%%%%%%%%%%");
-        log.info(multipartFile.getName());
-        log.info("%%%%%%%%%%%%%%%");
+    private HintDto.DetailDto saveHintAndGetDetailDto(BoardDto.SaveDto request, Board board) {
+        Hint hint = hintRepository.save(
+                Hint.builder()
+                        .board(board)
+                        .hintOne(request.getHint().getHintOne())
+                        .hintTwo(request.getHint().getHintTwo())
+                        .hintThree(request.getHint().getHintThree())
+                        .hintFour(request.getHint().getHintFour())
+                        .hintFive(request.getHint().getHintFive())
+                        .build()
+        );
+        return HintDto.DetailDto.response(hint);
+    }
 
-        return new ResponseEntity<>(BoardDto.boardImage.response(
-                imageName,
-                amazonS3Client.getUrl(bucket, imageName).toString()
-        ), HttpStatus.OK);
-    }*/
+    @Transactional
+    public BoardDto.SaveDto create(BoardDto.SaveDto request, UserDetails userDetails) {
+
+        User user = getUser(userDetails);
+        
+        Board board = boardRepository.save(
+                Board.builder()
+                        .user(user)
+                        .title(request.getTitle())
+                        .content(request.getContent())
+                        .correct(request.getCorrect())
+                        .contentImageUrl(request.getContentImageUrl())
+                        .viewCount(0)
+                        .build()
+        );
+        TagDto.DetailDto tag = saveTagAndGetDetailDto(request, board);
+        HintDto.DetailDto hint = saveHintAndGetDetailDto(request, board);
+
+        return BoardDto.SaveDto.response(board, user, tag, hint);
+    }
 
     @Transactional
     public ResponseEntity<Status> deleteImage(BoardDto.boardImage request) {
@@ -162,8 +167,8 @@ public class BoardService {
         String[] tag = request.getTag();
 
         for (String s : tag) {
-            if (tagCategoryRepository.findByTag(s).isEmpty()) {
-                tagCategoryRepository.save(TagCategory.builder().tag(s).build());
+            if (tagRepository.findByTag(s).isEmpty()) {
+                tagRepository.save(Tag.builder().tag(s).build());
             }
         }
 
@@ -197,7 +202,7 @@ public class BoardService {
     public ResponseEntity<BoardDto.Like> addLike(Long bid) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if (likeRepository.existsByBidAndEmail(bid,email)) {
+        if (likeRepository.existsByBidAndEmail(bid, email)) {
             likeRepository.deleteByEmail(email);
             return new ResponseEntity<>(BoardDto.Like.response("cancel", "좋아요 취소"), HttpStatus.OK);
         }
