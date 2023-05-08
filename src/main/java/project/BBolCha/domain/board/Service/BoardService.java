@@ -111,7 +111,7 @@ public class BoardService {
         String authorEmail = board.getUser().getEmail();
         String email = userDetails.getUsername();
 
-        if (authorEmail != email) {
+        if (authorEmail.equals(email) == false) {
             throw new CustomException(Result.USER_EMAIL_MISMATCH);
         }
 

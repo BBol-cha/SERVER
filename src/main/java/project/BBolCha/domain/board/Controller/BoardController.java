@@ -48,8 +48,7 @@ public class BoardController {
         return CustomResponseEntity.success(boardService.updateBoard(id, request));
     }
 
-    // 게시글 삭제
-    // SoftDelete 또는 HardDelete 리팩터링 재필요
+    // 게시글 삭제 (Soft Delete)
     @DeleteMapping("board/{id}")
     public CustomResponseEntity<Void> deleteBoard(
             @PathVariable Long id,

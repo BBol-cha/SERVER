@@ -2,6 +2,8 @@ package project.BBolCha.domain.board.Entity;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +24,8 @@ import java.util.Objects;
 @Builder
 @Entity
 @DynamicUpdate
+@Where(clause = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE board SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 public class Board extends BaseEntity implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +59,8 @@ public class Board extends BaseEntity implements Serializable{
 
     @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
     private Hint hint;
+
+    private LocalDateTime deletedAt;
 
     public void updateBoard(BoardDto.UpdateDto request) {
         this.title = request.getTitle();
