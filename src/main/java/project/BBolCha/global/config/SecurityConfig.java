@@ -11,10 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-import project.BBolCha.global.config.Jwt.JwtAccessDeniedHandler;
-import project.BBolCha.global.config.Jwt.JwtAuthenticationEntryPoint;
-import project.BBolCha.global.config.Jwt.JwtSecurityConfig;
-import project.BBolCha.global.config.Jwt.TokenProvider;
+import project.BBolCha.global.config.jwt.JwtAccessDeniedHandler;
+import project.BBolCha.global.config.jwt.JwtAuthenticationEntryPoint;
+import project.BBolCha.global.config.jwt.JwtSecurityConfig;
+import project.BBolCha.global.config.jwt.TokenProvider;
 
 
 @EnableWebSecurity
