@@ -28,7 +28,7 @@ public class CommentController {
     // 게시글 댓글 조회
     @GetMapping("board/list/comment")
     public CustomResponseEntity<Page<CommentDto.DetailDto>> fetchCommentsByPage(
-            @RequestParam("boardId") Long id, @RequestParam Integer page
+            @RequestParam("id") Long id, @RequestParam Integer page
     ) {
         return CustomResponseEntity.success(commentService.fetchCommentsByPage(id, page));
     }

@@ -65,7 +65,6 @@ public class BoardController {
         return CustomResponseEntity.success(boardService.listSortedBoardsPerPage(page, limit, filter, arrange));
     }
 
-
     // 좋아요 등록 및 취소
     @PostMapping("board/like")
     public CustomResponseEntity<BoardDto.LikeDto> toggleLike(
@@ -74,5 +73,4 @@ public class BoardController {
     ) {
         return CustomResponseEntity.success(boardService.toggleLike(id, userDetails));
     }
-
 }

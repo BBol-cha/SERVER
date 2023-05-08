@@ -120,7 +120,9 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<BoardDto.DetailDto> listSortedBoardsPerPage(Integer page, Integer limit, String filter, String arrange) {
+    public Page<BoardDto.DetailDto> listSortedBoardsPerPage(
+            Integer page, Integer limit, String filter, String arrange
+    ) {
         /*
          Filter : 조회수 / 생성날짜 (views / createAt)
          arrange : 정렬방식

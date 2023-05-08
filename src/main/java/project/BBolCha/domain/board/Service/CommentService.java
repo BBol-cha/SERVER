@@ -63,8 +63,9 @@ public class CommentService {
     @Transactional
     public Page<CommentDto.DetailDto> fetchCommentsByPage(Long id, Integer page) {
         Board board = getBoard(id);
-        Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createAt");
+        Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createdAt");
         Page<Comment> commentPage = commentRepository.findByBoard(board, pageable);
+
         return commentPage.map(CommentDto.DetailDto::response);
     }
 
