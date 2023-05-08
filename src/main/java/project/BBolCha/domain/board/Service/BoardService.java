@@ -1,9 +1,7 @@
 package project.BBolCha.domain.board.Service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,8 @@ import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Hint;
 import project.BBolCha.domain.board.Entity.Like;
 import project.BBolCha.domain.board.Entity.Tag;
-import project.BBolCha.domain.board.Repository.*;
+import project.BBolCha.domain.board.Repository.BoardRepository;
+import project.BBolCha.domain.board.Repository.LikeRepository;
 import project.BBolCha.domain.user.Entity.User;
 import project.BBolCha.domain.user.Repository.UserRepository;
 import project.BBolCha.global.Exception.CustomException;
@@ -33,13 +32,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
-    private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-    private final HintRepository hintRepository;
-    private final AmazonS3Client amazonS3Client;
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
 
     private User getUser(UserDetails userDetails) {
         String email = userDetails.getUsername();

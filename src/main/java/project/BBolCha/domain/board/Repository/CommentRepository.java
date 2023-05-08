@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Comment;
 
-import java.util.List;
-
-public interface CommentRepository extends JpaRepository<Comment,Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByBoard(Board board, Pageable pageable);
 }
