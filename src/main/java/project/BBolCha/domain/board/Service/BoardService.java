@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.Dto.BoardDto;
-import project.BBolCha.domain.board.Dto.HintDto;
-import project.BBolCha.domain.board.Dto.TagDto;
 import project.BBolCha.domain.board.Entity.Board;
 import project.BBolCha.domain.board.Entity.Hint;
 import project.BBolCha.domain.board.Entity.Like;
@@ -60,6 +58,17 @@ public class BoardService {
     public BoardDto.SaveDto createBoard(BoardDto.SaveDto request, UserDetails userDetails) {
         User user = getUser(userDetails);
 
+        Board board = boardRepository.save(
+                Board.builder()
+                        .user(user)
+                        .title(request.getTitle())
+                        .content(request.getContent())
+                        .correct(request.getCorrect())
+                        .contentImageUrl(request.getContentImageUrl())
+                        .viewCount(0)
+                        .build()
+        );
+
         Tag tag = Tag.builder()
                 .horror(request.getTag().getHorror())
                 .daily(request.getTag().getDaily())
@@ -75,17 +84,6 @@ public class BoardService {
                 .hintFour(request.getHint().getHintFour())
                 .hintFive(request.getHint().getHintFive())
                 .build();
-
-        Board board = boardRepository.save(
-                Board.builder()
-                        .user(user)
-                        .title(request.getTitle())
-                        .content(request.getContent())
-                        .correct(request.getCorrect())
-                        .contentImageUrl(request.getContentImageUrl())
-                        .viewCount(0)
-                        .build()
-        );
 
         board.saveTagAndHint(tag, hint);
 
