@@ -1,25 +1,16 @@
 package project.BBolCha.domain.board.Controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.board.Dto.BoardDto;
-import project.BBolCha.domain.board.Dto.CommentDto;
-import project.BBolCha.domain.board.Entity.Board;
-import project.BBolCha.domain.board.Entity.Comment;
 import project.BBolCha.domain.board.Service.BoardService;
 import project.BBolCha.global.Model.CustomResponseEntity;
-import project.BBolCha.global.Model.Status;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class BoardController {
     private final BoardService boardService;
 
@@ -28,7 +19,7 @@ public class BoardController {
     public CustomResponseEntity<BoardDto.SaveDto> createBoard(
             @RequestBody BoardDto.SaveDto request,
             @AuthenticationPrincipal UserDetails userDetails
-            ) {
+    ) {
         return CustomResponseEntity.success(boardService.createBoard(request, userDetails));
     }
 

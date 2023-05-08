@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.user.Dto.UserDto;
 import project.BBolCha.domain.user.Service.UserService;
 import project.BBolCha.global.Model.CustomResponseEntity;
-import project.BBolCha.global.Model.Status;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
