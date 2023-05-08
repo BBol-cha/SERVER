@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.BBolCha.domain.board.Entity.Board;
-import project.BBolCha.domain.board.Entity.Hint;
-import project.BBolCha.domain.board.Entity.Tag;
-import project.BBolCha.domain.user.Entity.User;
 
 import java.time.LocalDateTime;
 
@@ -86,9 +83,7 @@ public class BoardDto {
     }
 
     @Getter
-    @AllArgsConstructor
     @NoArgsConstructor
-    @Builder
     public static class UpdateDto {
         private Long id;
         private String authorName;
