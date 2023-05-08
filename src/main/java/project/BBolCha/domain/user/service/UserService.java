@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.user.dto.UserDto;
+import project.BBolCha.domain.user.dto.request.UserRequest;
+import project.BBolCha.domain.user.dto.responce.UserResponse;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
@@ -69,7 +71,7 @@ public class UserService {
         return authentication;
     }
 
-    private void LOGIN_VALIDATE(UserDto.LoginDto request, User user) {
+    private void LOGIN_VALIDATE(UserRequest.Login request, User user) {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(Result.PASSWORD_NOT_MATCHED);
         }
@@ -100,7 +102,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto.LoginDto login(UserDto.LoginDto request, HttpServletResponse response) {
+    public UserResponse.Login login(UserRequest.Login request, HttpServletResponse response) {
         User user = getUser(request.getEmail());
         LOGIN_VALIDATE(request, user);
 
@@ -109,7 +111,7 @@ public class UserService {
 
         setHttpOnlyCookie(response, refreshToken);
 
-        return UserDto.LoginDto.response(
+        return UserResponse.Login.response(
                 user,
                 tokenProvider.createAccessToken(authentication)
         );
