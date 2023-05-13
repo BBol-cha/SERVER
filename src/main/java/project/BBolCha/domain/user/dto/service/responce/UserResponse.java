@@ -1,6 +1,5 @@
-package project.BBolCha.domain.user.dto.responce;
+package project.BBolCha.domain.user.dto.service.responce;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import project.BBolCha.domain.user.entity.User;
 
