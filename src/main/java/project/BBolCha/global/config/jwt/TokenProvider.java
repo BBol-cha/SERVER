@@ -10,15 +10,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import project.BBolCha.domain.user.entity.Authority;
+import project.BBolCha.domain.user.entity.User;
+import project.BBolCha.domain.user.repository.UserRepository;
 import project.BBolCha.global.config.RedisDao;
+import project.BBolCha.global.exception.CustomException;
+import project.BBolCha.global.model.Result;
 
 import java.security.Key;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,6 +32,7 @@ public class TokenProvider implements InitializingBean {
     private final String auth;
     private final long tokenValidityInMilliseconds;
     private final long refreshTokenValidityInMilliseconds;
+    private final UserRepository userRepository;
     private Key key;
     private final RedisDao redisDao;
 
@@ -38,11 +41,12 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
             @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
             @Value("${jwt.auth.secret}") String auth,
-            RedisDao redisDao) {
+            UserRepository userRepository, RedisDao redisDao) {
         this.secret = secret;
         this.auth = auth;
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
         this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;
+        this.userRepository = userRepository;
         this.redisDao = redisDao;
     }
 
@@ -68,7 +72,7 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
-    public String createAccessToken(Authentication authentication) {
+    public String createAccessToken(User user, Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -78,6 +82,12 @@ public class TokenProvider implements InitializingBean {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim("id", user.getId())
+                .claim("name", user.getName())
+                .claim("email", user.getEmail())
+                .claim("password", user.getPassword())
+                .claim("profileImageUrl", user.getProfileImageUrl())
+                .claim("authorities", user.getAuthorities())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
@@ -135,9 +145,19 @@ public class TokenProvider implements InitializingBean {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        List<Authority> list = (List<Authority>) claims.get("authorities");
+        Set<Authority> authoritySet = new HashSet<>(list);
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        User user = User.builder()
+                .id(Long.valueOf(claims.get("id").toString()))
+                .name(claims.get("name").toString())
+                .email(claims.get("email").toString())
+                .password(claims.get("password").toString())
+                .profileImageUrl(claims.get("profileImageUrl").toString())
+                .authorities(authoritySet)
+                .build();
+
+        return new UsernamePasswordAuthenticationToken(user, token, authorities);
     }
 
     public String getRefreshTokenInfo(String token) {

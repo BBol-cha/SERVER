@@ -1,5 +1,6 @@
 package project.BBolCha.domain.user.entity;
 
+import io.jsonwebtoken.Claims;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -36,7 +37,8 @@ public class User {
     private Set<Authority> authorities;
 
     @Builder
-    private User(String name, String email, String password, String profileImageUrl, Set<Authority> authorities) {
+    private User(Long id, String name, String email, String password, String profileImageUrl, Set<Authority> authorities) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;

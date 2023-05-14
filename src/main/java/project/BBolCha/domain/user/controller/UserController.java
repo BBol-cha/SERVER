@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
+import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.service.UserService;
 import project.BBolCha.global.model.CustomResponseEntity;
 
@@ -41,8 +43,8 @@ public class UserController {
 
     // 정보 조회
     @GetMapping("auth/info")
-    public CustomResponseEntity<UserResponse.Detail> read() {
-        return CustomResponseEntity.success(userService.read());
+    public CustomResponseEntity<UserResponse.Detail> read(@AuthenticationPrincipal User user) {
+        return CustomResponseEntity.success(userService.read(user));
     }
 
     // 로그인 만료시 atk 재발급

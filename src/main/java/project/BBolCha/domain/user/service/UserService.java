@@ -93,7 +93,7 @@ public class UserService {
 
         return UserResponse.Login.response(
                 user,
-                tokenProvider.createAccessToken(authentication)
+                tokenProvider.createAccessToken(user, authentication)
         );
     }
 
@@ -111,7 +111,7 @@ public class UserService {
 
         return UserResponse.Login.response(
                 user,
-                tokenProvider.createAccessToken(authentication)
+                tokenProvider.createAccessToken(user, authentication)
         );
     }
 
@@ -125,8 +125,8 @@ public class UserService {
         return UserResponse.Reissue.response(tokenProvider.reCreateToken(email));
     }
 
-    public UserResponse.Detail read() {
-        return UserResponse.Detail.response(getUserSecurity());
+    public UserResponse.Detail read(User user) {
+        return UserResponse.Detail.response(user);
     }
 
     public Void logout(String accessToken) {
@@ -143,12 +143,5 @@ public class UserService {
         redisDao.setValues(accessToken, "logout", Duration.ofMillis(accessTokenExpiration));
 
         return null;
-    }
-
-    public User getUserSecurity() {
-        String email = SecurityUtil.getCurrentUsername().orElse("anonymousUser");
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_USER)
-        );
     }
 }

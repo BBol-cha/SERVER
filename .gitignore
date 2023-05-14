@@ -587,3 +587,5 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,macos,windows,git,gradle,vs,netbeans
 src/main/resources/application.yml
+
+src/main/resources/db/mysql/data.sql
