@@ -7,11 +7,8 @@ import project.BBolCha.domain.board.dto.HintDto;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
-@Builder
 @DynamicUpdate
 @Entity
 public class Hint implements Serializable {
@@ -34,8 +31,19 @@ public class Hint implements Serializable {
 
     private String hintFive;
 
-    public void setId(Long id) {
+    @Builder
+    private Hint(Long id, Board board, String hintOne, String hintTwo, String hintThree, String hintFour, String hintFive) {
         this.id = id;
+        this.board = board;
+        this.hintOne = hintOne;
+        this.hintTwo = hintTwo;
+        this.hintThree = hintThree;
+        this.hintFour = hintFour;
+        this.hintFive = hintFive;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public void updateHint(HintDto.DetailDto request) {

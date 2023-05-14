@@ -42,17 +42,18 @@ class UserServiceTest {
     @Autowired
     private RedisDao redisDao;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private TokenProvider tokenProvider;
 
     @Autowired
     private AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @DisplayName("사용자가 회원가입을 해서 토큰을 발급받는다.")
     @Test

@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.dto.BoardDto;
+import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
+import project.BBolCha.domain.board.dto.service.request.BoardServiceRequest;
+import project.BBolCha.domain.board.dto.service.response.BoardResponse;
 import project.BBolCha.domain.board.entity.Board;
 import project.BBolCha.domain.board.entity.Hint;
 import project.BBolCha.domain.board.entity.Like;
@@ -18,6 +21,7 @@ import project.BBolCha.domain.board.repository.BoardRepository;
 import project.BBolCha.domain.board.repository.LikeRepository;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
+import project.BBolCha.global.config.jwt.SecurityUtil;
 import project.BBolCha.global.exception.CustomException;
 import project.BBolCha.global.model.Result;
 
@@ -34,8 +38,8 @@ public class BoardService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
-    private User getUser(UserDetails userDetails) {
-        String email = userDetails.getUsername();
+    public User getUserSecurity() {
+        String email = SecurityUtil.getCurrentUsername().orElse("anonymousUser");
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(Result.NOT_FOUND_USER)
         );
@@ -48,8 +52,8 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto.SaveDto createBoard(BoardDto.SaveDto request, UserDetails userDetails) {
-        User user = getUser(userDetails);
+    public BoardResponse.Save createBoard(BoardServiceRequest.Save request) {
+        User user = getUserSecurity();
 
         Board board = boardRepository.save(
                 Board.builder()
@@ -80,7 +84,7 @@ public class BoardService {
 
         board.saveTagAndHint(tag, hint);
 
-        return BoardDto.SaveDto.response(board);
+        return BoardResponse.Save.of(board);
     }
 
     @Transactional
@@ -129,7 +133,7 @@ public class BoardService {
 
     @Transactional
     public BoardDto.LikeDto toggleLike(Long id, UserDetails userDetails) {
-        User user = getUser(userDetails);
+        User user = getUserSecurity();
         Board board = getBoard(id);
         Optional<Like> likeOptional = likeRepository.findByBoardAndUser(board, user);
 

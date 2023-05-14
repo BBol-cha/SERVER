@@ -6,6 +6,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.board.dto.BoardDto;
+import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
+import project.BBolCha.domain.board.dto.service.response.BoardResponse;
 import project.BBolCha.domain.board.service.BoardService;
 import project.BBolCha.global.model.CustomResponseEntity;
 
@@ -16,11 +18,10 @@ public class BoardController {
 
     // 게시글 생성
     @PostMapping("board")
-    public CustomResponseEntity<BoardDto.SaveDto> createBoard(
-            @RequestBody BoardDto.SaveDto request,
-            @AuthenticationPrincipal UserDetails userDetails
+    public CustomResponseEntity<BoardResponse.Save> createBoard(
+            @RequestBody BoardRequest.Save request
     ) {
-        return CustomResponseEntity.success(boardService.createBoard(request, userDetails));
+        return CustomResponseEntity.success(boardService.createBoard(request.toServiceRequest()));
     }
 
     // 게시글 상세 조회

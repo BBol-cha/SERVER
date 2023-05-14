@@ -7,11 +7,8 @@ import project.BBolCha.domain.board.dto.TagDto;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
-@Builder
 @DynamicUpdate
 @Entity
 public class Tag implements Serializable {
@@ -34,8 +31,19 @@ public class Tag implements Serializable {
 
     private Boolean sf;
 
-    public void setId(Long id) {
+    @Builder
+    private Tag(Long id, Board board, Boolean horror, Boolean daily, Boolean romance, Boolean fantasy, Boolean sf) {
         this.id = id;
+        this.board = board;
+        this.horror = horror;
+        this.daily = daily;
+        this.romance = romance;
+        this.fantasy = fantasy;
+        this.sf = sf;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public void updateTag(TagDto.DetailDto request) {

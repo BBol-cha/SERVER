@@ -13,10 +13,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 @Entity
 @DynamicUpdate
 @Where(clause = "deleted_at IS NULL")
@@ -56,6 +54,21 @@ public class Board extends BaseEntity implements Serializable{
     private Hint hint;
 
     private LocalDateTime deletedAt;
+
+    @Builder
+    private Board(Long id, User user, String title, String content, String correct, String contentImageUrl, Integer viewCount, List<Like> like, Tag tag, Hint hint, LocalDateTime deletedAt) {
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.correct = correct;
+        this.contentImageUrl = contentImageUrl;
+        this.viewCount = viewCount;
+        this.like = like;
+        this.tag = tag;
+        this.hint = hint;
+        this.deletedAt = deletedAt;
+    }
 
     public void updateBoard(BoardDto.UpdateDto request) {
         this.title = request.getTitle();
