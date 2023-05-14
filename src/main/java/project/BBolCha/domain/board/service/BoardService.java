@@ -38,13 +38,6 @@ public class BoardService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
-    public User getUserSecurity() {
-        String email = SecurityUtil.getCurrentUsername().orElse("anonymousUser");
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_USER)
-        );
-    }
-
     private Board getBoard(Long id) {
         return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(Result.NOT_FOUND_BOARD)
@@ -52,9 +45,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse.Save createBoard(BoardServiceRequest.Save request) {
-        User user = getUserSecurity();
-
+    public BoardResponse.Save createBoard(BoardServiceRequest.Save request, User user) {
         Board board = boardRepository.save(
                 Board.builder()
                         .user(user)
@@ -132,8 +123,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto.LikeDto toggleLike(Long id, UserDetails userDetails) {
-        User user = getUserSecurity();
+    public BoardDto.LikeDto toggleLike(Long id, User user) {
         Board board = getBoard(id);
         Optional<Like> likeOptional = likeRepository.findByBoardAndUser(board, user);
 

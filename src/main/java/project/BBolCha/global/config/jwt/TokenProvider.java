@@ -85,9 +85,7 @@ public class TokenProvider implements InitializingBean {
                 .claim("id", user.getId())
                 .claim("name", user.getName())
                 .claim("email", user.getEmail())
-                .claim("password", user.getPassword())
                 .claim("profileImageUrl", user.getProfileImageUrl())
-                .claim("authorities", user.getAuthorities())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
@@ -145,16 +143,11 @@ public class TokenProvider implements InitializingBean {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        List<Authority> list = (List<Authority>) claims.get("authorities");
-        Set<Authority> authoritySet = new HashSet<>(list);
-
         User user = User.builder()
                 .id(Long.valueOf(claims.get("id").toString()))
                 .name(claims.get("name").toString())
-                .email(claims.get("email").toString())
-                .password(claims.get("password").toString())
+                .email(claims.getSubject())
                 .profileImageUrl(claims.get("profileImageUrl").toString())
-                .authorities(authoritySet)
                 .build();
 
         return new UsernamePasswordAuthenticationToken(user, token, authorities);

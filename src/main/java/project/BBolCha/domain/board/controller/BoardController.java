@@ -9,6 +9,7 @@ import project.BBolCha.domain.board.dto.BoardDto;
 import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
 import project.BBolCha.domain.board.dto.service.response.BoardResponse;
 import project.BBolCha.domain.board.service.BoardService;
+import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.global.model.CustomResponseEntity;
 
 @RestController
@@ -19,9 +20,10 @@ public class BoardController {
     // 게시글 생성
     @PostMapping("board")
     public CustomResponseEntity<BoardResponse.Save> createBoard(
-            @RequestBody BoardRequest.Save request
+            @RequestBody BoardRequest.Save request,
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(boardService.createBoard(request.toServiceRequest()));
+        return CustomResponseEntity.success(boardService.createBoard(request.toServiceRequest(), user));
     }
 
     // 게시글 상세 조회
@@ -61,8 +63,8 @@ public class BoardController {
     @PostMapping("board/like")
     public CustomResponseEntity<BoardDto.LikeDto> toggleLike(
             @RequestParam("id") Long id,
-            @AuthenticationPrincipal final UserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(boardService.toggleLike(id, userDetails));
+        return CustomResponseEntity.success(boardService.toggleLike(id, user));
     }
 }

@@ -79,7 +79,7 @@ class BoardServiceTest {
                 .build();
 
         // when
-        BoardResponse.Save response = boardService.createBoard(request);
+        BoardResponse.Save response = boardService.createBoard(request, user);
 
         // then
         assertThat(response)
