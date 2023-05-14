@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Component("userDetailsService")
 @RequiredArgsConstructor
-public class JwtUserService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override

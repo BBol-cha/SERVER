@@ -12,11 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.user.dto.UserDto;
-import project.BBolCha.domain.user.dto.request.UserRequest;
-import project.BBolCha.domain.user.dto.responce.UserResponse;
+import project.BBolCha.domain.user.dto.controller.request.UserRequest;
+import project.BBolCha.domain.user.dto.service.request.UserServiceRequest;
+import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
+import project.BBolCha.global.config.jwt.SecurityUtil;
 import project.BBolCha.global.exception.CustomException;
 import project.BBolCha.global.model.Result;
 import project.BBolCha.global.config.jwt.TokenProvider;
@@ -27,12 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
@@ -47,12 +51,6 @@ public class UserService {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
-    }
-
-    private User getUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_USER)
-        );
     }
 
     private Set<Authority> getAuthorities() {
@@ -71,15 +69,17 @@ public class UserService {
         return authentication;
     }
 
-    private void LOGIN_VALIDATE(UserRequest.Login request, User user) {
+    private void LOGIN_VALIDATE(UserServiceRequest.Login request, User user) {
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(Result.PASSWORD_NOT_MATCHED);
         }
+
     }
 
     // Service
     @Transactional
-    public UserDto.LoginDto register(UserDto.RegistrationDto request, HttpServletResponse response) {
+    public UserResponse.Login registerNewUser(UserServiceRequest.Registration request, HttpServletResponse response) {
 
         User user = userRepository.save(
                 User.builder()
@@ -95,20 +95,22 @@ public class UserService {
         String rtk = tokenProvider.createRefreshToken(request.getEmail());
         setHttpOnlyCookie(response, rtk);
 
-        return UserDto.LoginDto.response(
+        return UserResponse.Login.response(
                 user,
                 tokenProvider.createAccessToken(authentication)
         );
     }
 
-    @Transactional
-    public UserResponse.Login login(UserRequest.Login request, HttpServletResponse response) {
-        User user = getUser(request.getEmail());
+    public UserResponse.Login login(UserServiceRequest.Login request, HttpServletResponse response) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(
+                        () -> new CustomException(Result.NOT_FOUND_USER)
+                );
+
         LOGIN_VALIDATE(request, user);
 
         Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
         String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
-
         setHttpOnlyCookie(response, refreshToken);
 
         return UserResponse.Login.response(
@@ -117,30 +119,25 @@ public class UserService {
         );
     }
 
-    @Transactional
-    public UserDto.AccessTokenRefreshDto reissue(String refreshToken) {
+    public UserResponse.Reissue reissue(String refreshToken) {
         String email = tokenProvider.getRefreshTokenInfo(refreshToken);
         String rtkInRedis = redisDao.getValues(email);
 
         if (Objects.isNull(rtkInRedis) || !rtkInRedis.equals(refreshToken))
             throw new CustomException(Result.INVALID_REFRESH_TOKEN_CONSTANT);
 
-        return UserDto.AccessTokenRefreshDto.response(
-                tokenProvider.reCreateToken(email)
-        );
+        return UserResponse.Reissue.response(tokenProvider.reCreateToken(email));
     }
 
-    @Transactional
-    public UserDto.DetailDto read(UserDetails userDetails) {
-        User user = getUser(userDetails.getUsername());
-        return UserDto.DetailDto.response(user);
+    public UserResponse.Detail read() {
+        return UserResponse.Detail.response(getUserSecurity());
     }
 
-    @Transactional
-    public Void logout(String bearerToken, UserDetails userDetails) {
-        String accessToken = bearerToken.substring(7);
+    public Void logout(String accessToken) {
         Long accessTokenExpiration = tokenProvider.getExpiration(accessToken);
-        String email = userDetails.getUsername();
+        String email = SecurityUtil.getCurrentUsername().orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_USER)
+        );
 
         if (redisDao.getValues(email) == null || redisDao.getValues(email).isEmpty()) {
             throw new CustomException(Result.FAIL);
@@ -152,4 +149,10 @@ public class UserService {
         return null;
     }
 
+    public User getUserSecurity() {
+        String email = SecurityUtil.getCurrentUsername().orElse("anonymousUser");
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_USER)
+        );
+    }
 }

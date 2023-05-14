@@ -2,6 +2,7 @@ package project.BBolCha.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,10 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-import project.BBolCha.global.config.jwt.JwtAccessDeniedHandler;
-import project.BBolCha.global.config.jwt.JwtAuthenticationEntryPoint;
-import project.BBolCha.global.config.jwt.JwtSecurityConfig;
-import project.BBolCha.global.config.jwt.TokenProvider;
+import project.BBolCha.global.config.jwt.*;
 
 
 @EnableWebSecurity
@@ -26,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private CustomUserDetailsService customUserDetailsService;
 
     private static final String[] PERMIT_URL_ARRAY = {
             /* swagger v2 */
@@ -40,11 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v3/api-docs/**",
             "/swagger-ui/**"
     };
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -66,9 +60,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/board/list","/board/list/{id}","/board/list/comment/{bid}",
                         "/auth/kakao","/auth/kakao/login").permitAll()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider,redisDao));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

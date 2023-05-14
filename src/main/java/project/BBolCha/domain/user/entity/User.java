@@ -6,11 +6,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Set;
 
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@Builder
 @Entity
 @Table(name = "user")
 @EntityListeners(AuditingEntityListener.class)
@@ -36,4 +34,13 @@ public class User {
             joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
+
+    @Builder
+    private User(String name, String email, String password, String profileImageUrl, Set<Authority> authorities) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.profileImageUrl = profileImageUrl;
+        this.authorities = authorities;
+    }
 }

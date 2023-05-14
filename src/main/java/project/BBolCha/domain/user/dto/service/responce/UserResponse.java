@@ -1,6 +1,7 @@
 package project.BBolCha.domain.user.dto.service.responce;
 
 import lombok.*;
+import project.BBolCha.domain.user.dto.UserDto;
 import project.BBolCha.domain.user.entity.User;
 
 public class UserResponse {
@@ -22,6 +23,50 @@ public class UserResponse {
                     .email(user.getEmail())
                     .name(user.getName())
                     .profileImageUrl(user.getProfileImageUrl())
+                    .accessToken(accessToken)
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    public static class Detail {
+
+        private Long id;
+        private String email;
+        private String name;
+        private String profileImageUrl;
+
+        @Builder
+        private Detail(Long id, String email, String name, String profileImageUrl) {
+            this.id = id;
+            this.email = email;
+            this.name = name;
+            this.profileImageUrl = profileImageUrl;
+        }
+
+        public static UserResponse.Detail response(User user) {
+            return UserResponse.Detail.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    public static class Reissue {
+        private String accessToken;
+
+        @Builder
+        private Reissue(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public static Reissue response(String accessToken) {
+            return Reissue.builder()
                     .accessToken(accessToken)
                     .build();
         }

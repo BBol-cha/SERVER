@@ -19,27 +19,35 @@ repositories {
 }
 
 dependencies {
-	// implementation
+	// SpringBoot
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
-	// developmentOnly
-	// compileOnly
-	compileOnly 'org.projectlombok:lombok'
-	// runtimeOnly
-	runtimeOnly 'mysql:mysql-connector-java'
+
+	// JWT
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-	// annotationProcessor
+
+	// RestDocs
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	// testImplementation
+
+	// h2
+	runtimeOnly 'com.h2database:h2'
+
+	// MySQL
+	runtimeOnly 'mysql:mysql-connector-java'
+
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 }
 
 tasks.named('test') {
