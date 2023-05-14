@@ -7,12 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.user.dto.UserDto;
-import project.BBolCha.domain.user.dto.controller.request.UserRequest;
 import project.BBolCha.domain.user.dto.service.request.UserServiceRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.entity.Authority;
@@ -29,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 

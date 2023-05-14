@@ -7,6 +7,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.BBolCha.domain.ControllerTestSupport;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
+
+import javax.servlet.http.Cookie;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,7 +59,7 @@ class UserControllerTest extends ControllerTestSupport {
                         .name("kevin")
                         .profileImageUrl("test.png")
                         .build()
-        );
+                );
 
         // when // then
         mockMvc.perform(
@@ -66,14 +69,29 @@ class UserControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
-/*    @DisplayName("토큰 재발급 API")
+    @DisplayName("토큰 재발급 API")
     @Test
-    void reissueToken() {
+    void reissueToken() throws Exception {
         // given
-        given(userService.reissue())
-                .willReturn()
-        // when
+        Cookie cookie = new Cookie("refreshToken", "testToken");
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth")
+                                .cookie(cookie)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
-        // then
-    }*/
+    @DisplayName("로그아웃 API")
+    @Test
+    void test() throws Exception {
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/auth/logout")
+                                .header("Authorization", "testToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

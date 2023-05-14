@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import project.BBolCha.domain.user.dto.UserDto;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.service.UserService;
@@ -23,12 +20,6 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-
-    // version 확인
-    @GetMapping("version")
-    public ResponseEntity<String> version() {
-        return new ResponseEntity<>("version 2.0.0", HttpStatus.OK);
-    }
 
     // 로그인
     @PostMapping("auth/login")

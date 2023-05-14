@@ -1,7 +1,6 @@
 package project.BBolCha.domain.user.dto.service.responce;
 
 import lombok.*;
-import project.BBolCha.domain.user.dto.UserDto;
 import project.BBolCha.domain.user.entity.User;
 
 public class UserResponse {
