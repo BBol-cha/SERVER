@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.BBolCha.domain.ControllerTestSupport;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
+import project.BBolCha.domain.user.entity.User;
 
 import javax.servlet.http.Cookie;
 
@@ -51,8 +52,9 @@ class UserControllerTest extends ControllerTestSupport {
     @DisplayName("유저 정보 조회 API")
     @Test
     void readUserDetail() throws Exception {
+        User user = User.builder().build();
         // given
-        given(userService.read())
+        given(userService.read(user))
                 .willReturn(UserResponse.Detail.builder()
                         .id(1L)
                         .email("kevin@gmail.com")

@@ -141,7 +141,7 @@ class UserServiceTest {
         saveSecurityContextHolderAndGetAuthentication();
 
         // when
-        UserResponse.Detail response = userService.read();
+        UserResponse.Detail response = userService.read(user);
 
         // then
         assertThat(response)
@@ -173,7 +173,7 @@ class UserServiceTest {
         User user = saveAndRetrieveUser();
         Authentication authentication = saveSecurityContextHolderAndGetAuthentication();
 
-        String testAccessToken = tokenProvider.createAccessToken(authentication);
+        String testAccessToken = tokenProvider.createAccessToken(user, authentication);
         redisDao.setValues(user.getEmail(), "testRefreshToken");
 
         // when
