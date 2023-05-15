@@ -2,7 +2,7 @@ package project.BBolCha.domain.board.entity;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import project.BBolCha.domain.board.dto.HintDto;
+import project.BBolCha.domain.board.dto.service.request.HintServiceRequest;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,7 +46,7 @@ public class Hint implements Serializable {
         this.board = board;
     }
 
-    public void updateHint(HintDto.DetailDto request) {
+    public void updateHint(HintServiceRequest.Save request) {
         this.hintOne = request.getHintOne();
         this.hintTwo = request.getHintTwo();
         this.hintThree = request.getHintThree();

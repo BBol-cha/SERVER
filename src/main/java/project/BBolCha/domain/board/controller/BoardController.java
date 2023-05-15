@@ -12,6 +12,8 @@ import project.BBolCha.domain.board.service.BoardService;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.global.model.CustomResponseEntity;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
@@ -20,7 +22,7 @@ public class BoardController {
     // 게시글 생성
     @PostMapping("board")
     public CustomResponseEntity<BoardResponse.Save> createBoard(
-            @RequestBody BoardRequest.Save request,
+            @Valid @RequestBody BoardRequest.Save request,
             @AuthenticationPrincipal User user
     ) {
         return CustomResponseEntity.success(boardService.createBoard(request.toServiceRequest(), user));
@@ -37,9 +39,11 @@ public class BoardController {
     // 게시글 수정
     @PatchMapping("board/{id}")
     public CustomResponseEntity<BoardResponse.Detail> updateBoard(
-            @PathVariable Long id, @RequestBody BoardDto.UpdateDto request
+            @PathVariable Long id,
+            @Valid @RequestBody BoardRequest.Update request,
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(boardService.updateBoard(id, request));
+        return CustomResponseEntity.success(boardService.updateBoard(id, request.toServiceRequest(), user));
     }
 
     // 게시글 삭제 (Soft Delete)

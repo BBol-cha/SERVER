@@ -10,6 +10,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.filter.CorsFilter;
+import project.BBolCha.domain.board.controller.BoardController;
+import project.BBolCha.domain.board.service.BoardService;
 import project.BBolCha.domain.user.controller.UserController;
 import project.BBolCha.domain.user.service.UserService;
 import project.BBolCha.global.config.RedisDao;
@@ -19,7 +21,8 @@ import project.BBolCha.global.config.jwt.JwtAuthenticationEntryPoint;
 import project.BBolCha.global.config.jwt.TokenProvider;
 
 @WebMvcTest(controllers = {
-        UserController.class
+        UserController.class,
+        BoardController.class
 })
 @AutoConfigureMockMvc(addFilters = false)
 public abstract class ControllerTestSupport {
@@ -31,6 +34,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected BoardService boardService;
 
     @MockBean
     private RedisDao redisDao;

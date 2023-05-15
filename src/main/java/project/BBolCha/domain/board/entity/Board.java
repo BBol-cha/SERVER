@@ -5,6 +5,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import project.BBolCha.domain.board.dto.BoardDto;
+import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
+import project.BBolCha.domain.board.dto.controller.request.HintRequest;
+import project.BBolCha.domain.board.dto.controller.request.TagRequest;
+import project.BBolCha.domain.board.dto.service.request.HintServiceRequest;
+import project.BBolCha.domain.board.dto.service.request.TagServiceRequest;
 import project.BBolCha.domain.user.entity.User;
 
 import javax.persistence.*;
@@ -20,7 +25,7 @@ import java.util.List;
 @DynamicUpdate
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE board SET deleted_at = CURRENT_TIMESTAMP where id = ?")
-public class Board extends BaseEntity implements Serializable{
+public class Board extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -71,14 +76,17 @@ public class Board extends BaseEntity implements Serializable{
         this.deletedAt = deletedAt;
     }
 
-    public void updateBoard(BoardDto.UpdateDto request) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-        this.correct = request.getCorrect();
-        this.contentImageUrl = request.getContentImageUrl();
+    public void updateBoard(
+            String title, String content, String correct,
+            String contentImageUrl, TagServiceRequest.Save tag, HintServiceRequest.Save hint
+    ) {
+        this.title = title;
+        this.content = content;
+        this.correct = correct;
+        this.contentImageUrl = contentImageUrl;
 
-        this.tag.updateTag(request.getTag());
-        this.hint.updateHint(request.getHint());
+        this.tag.updateTag(tag);
+        this.hint.updateHint(hint);
     }
 
     public void saveTagAndHint(Tag tag, Hint hint) {

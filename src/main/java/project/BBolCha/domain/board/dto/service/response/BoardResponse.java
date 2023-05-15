@@ -3,9 +3,6 @@ package project.BBolCha.domain.board.dto.service.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.BBolCha.domain.board.dto.BoardDto;
-import project.BBolCha.domain.board.dto.HintDto;
-import project.BBolCha.domain.board.dto.TagDto;
 import project.BBolCha.domain.board.entity.Board;
 
 import java.time.LocalDateTime;
@@ -25,15 +22,15 @@ public class BoardResponse {
         private Integer viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private TagDto.DetailDto tag;
-        private HintDto.DetailDto hint;
+        private TagResponse tag;
+        private HintResponse hint;
 
         @Builder
         private Save(
                 Long id, String authorName, String title,
                 String content, String correct, String contentImageUrl,
                 Integer likeCount, Integer viewCount, LocalDateTime createdAt,
-                LocalDateTime updatedAt, TagDto.DetailDto tag, HintDto.DetailDto hint
+                LocalDateTime updatedAt, TagResponse tag, HintResponse hint
         ) {
             this.id = id;
             this.authorName = authorName;
@@ -61,8 +58,8 @@ public class BoardResponse {
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
-                    .tag(TagDto.DetailDto.response(board.getTag()))
-                    .hint(HintDto.DetailDto.response(board.getHint()))
+                    .tag(TagResponse.response(board.getTag()))
+                    .hint(HintResponse.response(board.getHint()))
                     .build();
         }
     }
@@ -80,15 +77,15 @@ public class BoardResponse {
         private Integer viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private TagDto.DetailDto tag;
-        private HintDto.DetailDto hint;
+        private TagResponse tag;
+        private HintResponse hint;
 
         @Builder
         public Detail(
                 Long id, String authorName, String title,
                 String content, String correct, String contentImageUrl,
                 Integer likeCount, Integer viewCount, LocalDateTime createdAt,
-                LocalDateTime updatedAt, TagDto.DetailDto tag, HintDto.DetailDto hint
+                LocalDateTime updatedAt, TagResponse tag, HintResponse hint
         ) {
             this.id = id;
             this.authorName = authorName;
@@ -116,8 +113,8 @@ public class BoardResponse {
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
-                    .tag(TagDto.DetailDto.response(board.getTag()))
-                    .hint(HintDto.DetailDto.response(board.getHint()))
+                    .tag(TagResponse.response(board.getTag()))
+                    .hint(HintResponse.response(board.getHint()))
                     .build();
         }
     }

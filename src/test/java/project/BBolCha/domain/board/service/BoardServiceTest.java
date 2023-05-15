@@ -9,10 +9,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.board.dto.BoardDto;
 import project.BBolCha.domain.board.dto.service.request.BoardServiceRequest;
 import project.BBolCha.domain.board.dto.service.request.HintServiceRequest;
 import project.BBolCha.domain.board.dto.service.request.TagServiceRequest;
@@ -59,26 +57,11 @@ class BoardServiceTest {
     void createBoard() {
         // given
         User user = saveAndRetrieveUser();
-        saveSecurityContextHolderAndGetAuthentication();
 
-        TagServiceRequest.Save tagRequest = TagServiceRequest.Save.builder()
-                .horror(true)
-                .daily(true)
-                .romance(false)
-                .fantasy(false)
-                .sf(true)
-                .build();
-
-        HintServiceRequest.Save hintRequest = HintServiceRequest.Save.builder()
-                .hintOne("1")
-                .hintTwo("2")
-                .hintThree("3")
-                .hintFour("4")
-                .hintFive("5")
-                .build();
+        TagServiceRequest.Save tagRequest = tagRequestToEntity(true, true, false, false, true);
+        HintServiceRequest.Save hintRequest = hintRequestToEntity("1", "2", "3", "4", "5");
 
         BoardServiceRequest.Save request = BoardServiceRequest.Save.builder()
-                .authorName("테스트 계정")
                 .title("테스트")
                 .content("내용 테스트")
                 .correct("정답 테스트")
@@ -109,7 +92,64 @@ class BoardServiceTest {
     void readBoardDetail() {
         // given
         User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
 
+        // when
+        BoardResponse.Detail response = boardService.findBoard(board.getId());
+
+        // then
+        assertThat(response)
+                .extracting("authorName", "title", "content", "correct", "contentImageUrl", "likeCount", "viewCount")
+                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 0, 5);
+
+        assertThat(response.getTag())
+                .extracting("horror", "daily", "romance", "fantasy", "sf")
+                .contains(true, true, false, false, true);
+
+        assertThat(response.getHint())
+                .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
+                .contains("1", "2", "3", "4", "5");
+    }
+
+    @DisplayName("유저가 자신이 작성한 게시글을 제목, 내용, 정답, 이미지, 태그, 힌트를 수정한다.")
+    @Test
+    void test() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        TagServiceRequest.Save tagRequest = tagRequestToEntity(false, false, false, false, true);
+        HintServiceRequest.Save hintRequest = hintRequestToEntity("6", "7", "8", "9", "10");
+
+        BoardServiceRequest.Update request = BoardServiceRequest.Update.builder()
+                .title("titleUpdate")
+                .content("contentUpdate")
+                .correct("correctUpdate")
+                .contentImageUrl("imageUpdate.png")
+                .tag(tagRequest)
+                .hint(hintRequest)
+                .build();
+
+        // when
+        BoardResponse.Detail response = boardService.updateBoard(board.getId(), request, user);
+
+        // then
+        assertThat(response)
+                .extracting("authorName", "title", "content", "correct", "contentImageUrl", "likeCount", "viewCount")
+                .contains("테스트 계정", "titleUpdate", "contentUpdate", "correctUpdate", "imageUpdate.png", 0, 5);
+
+        assertThat(response.getTag())
+                .extracting("horror", "daily", "romance", "fantasy", "sf")
+                .contains(false, false, false, false, true);
+
+        assertThat(response.getHint())
+                .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
+                .contains("6", "7", "8", "9", "10");
+    }
+
+
+    // method
+    private Board saveAndRetrieveBoard(User user) {
         List<Like> likes = new ArrayList<>();
 
         Board board = Board.builder()
@@ -141,28 +181,11 @@ class BoardServiceTest {
                 .build();
 
 
-        board.saveTagAndHint(tag,hint);
+        board.saveTagAndHint(tag, hint);
 
-        Board saveBoard = boardRepository.save(board);
-
-        // when
-        BoardResponse.Detail response = boardService.findBoard(saveBoard.getId());
-
-        // then
-        assertThat(response)
-                .extracting("authorName", "title", "content", "correct", "contentImageUrl", "likeCount", "viewCount")
-                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 0, 5);
-
-        assertThat(response.getTag())
-                .extracting("horror", "daily", "romance", "fantasy", "sf")
-                .contains(true, true, false, false, true);
-
-        assertThat(response.getHint())
-                .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
-                .contains("1", "2", "3", "4", "5");
+        return boardRepository.save(board);
     }
 
-    // method
     private User saveAndRetrieveUser() {
         User user = User.builder()
                 .name("테스트 계정")
@@ -175,19 +198,36 @@ class BoardServiceTest {
         return userRepository.save(user);
     }
 
-    private Authentication saveSecurityContextHolderAndGetAuthentication() {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken("test@test.com", "abc123!");
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return authentication;
-    }
-
     private Set<Authority> getAuthorities() {
         Authority authority = Authority.builder()
                 .authorityName("ROLE_USER")
                 .build();
         return Collections.singleton(authority);
+    }
+
+    private static TagServiceRequest.Save tagRequestToEntity(
+            boolean horror, boolean daily, boolean romance,
+            boolean fantasy, boolean sf
+    ) {
+        return TagServiceRequest.Save.builder()
+                .horror(horror)
+                .daily(daily)
+                .romance(romance)
+                .fantasy(fantasy)
+                .sf(sf)
+                .build();
+    }
+
+    private static HintServiceRequest.Save hintRequestToEntity(
+            String hintOne, String hintTwo, String hintThree,
+            String hintFour, String hintFive
+    ) {
+        return HintServiceRequest.Save.builder()
+                .hintOne(hintOne)
+                .hintTwo(hintTwo)
+                .hintThree(hintThree)
+                .hintFour(hintFour)
+                .hintFive(hintFive)
+                .build();
     }
 }

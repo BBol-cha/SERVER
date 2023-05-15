@@ -88,9 +88,17 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse.Detail updateBoard(Long id, BoardDto.UpdateDto request) {
+    public BoardResponse.Detail updateBoard(Long id, BoardServiceRequest.Update request, User user) {
         Board board = getBoard(id);
-        board.updateBoard(request);
+
+        if (board.getUser().getId() != user.getId()) {
+            throw new CustomException(Result.NOT_MY_POST);
+        }
+
+        board.updateBoard(
+                request.getTitle(), request.getContent(), request.getCorrect(),
+                request.getContentImageUrl(), request.getTag(), request.getHint()
+        );
 
         return BoardResponse.Detail.response(board);
     }

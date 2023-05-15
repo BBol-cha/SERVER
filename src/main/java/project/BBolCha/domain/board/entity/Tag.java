@@ -2,7 +2,7 @@ package project.BBolCha.domain.board.entity;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import project.BBolCha.domain.board.dto.TagDto;
+import project.BBolCha.domain.board.dto.service.request.TagServiceRequest;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,7 +46,7 @@ public class Tag implements Serializable {
         this.board = board;
     }
 
-    public void updateTag(TagDto.DetailDto request) {
+    public void updateTag(TagServiceRequest.Save request) {
         this.horror = request.getHorror();
         this.daily = request.getDaily();
         this.romance = request.getRomance();
