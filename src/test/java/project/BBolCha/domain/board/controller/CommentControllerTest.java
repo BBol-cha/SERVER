@@ -49,7 +49,7 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("게시글의 댓글들을 페이지로 조회한다.")
+    @DisplayName("댓글 조회 API")
     @Test
     void fetchCommentsByPage() throws Exception {
         // when // then
@@ -57,6 +57,18 @@ class CommentControllerTest extends ControllerTestSupport {
                 MockMvcRequestBuilders.get("/board/list/comment")
                         .param("id","1")
                         .param("page","1")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("댓글 삭제 API")
+    @Test
+    void deleteComment() throws Exception {
+        // when // then
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/board/comment")
+                        .param("id","1")
         )
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -70,8 +70,12 @@ public class CommentService {
     }
 
     @Transactional
-    public Void deleteComment(Long id) {
+    public Void deleteComment(Long id, User user) {
         Comment comment = getComment(id);
+
+        if (comment.getUser().getId() != user.getId()) {
+            throw new CustomException(Result.NOT_MY_COMMENT);
+        }
 
         commentRepository.delete(comment);
         return null;

@@ -39,8 +39,9 @@ public class CommentController {
     // 게시글 댓글 삭제
     @DeleteMapping("board/comment")
     public CustomResponseEntity<Void> deleteComment(
-            @RequestParam Long id
+            @RequestParam Long id,
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(commentService.deleteComment(id));
+        return CustomResponseEntity.success(commentService.deleteComment(id, user));
     }
 }

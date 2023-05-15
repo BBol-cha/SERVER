@@ -7,22 +7,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.board.dto.service.request.BoardServiceRequest;
 import project.BBolCha.domain.board.dto.service.request.CommentServiceRequest;
 import project.BBolCha.domain.board.dto.service.response.CommentResponse;
 import project.BBolCha.domain.board.entity.*;
 import project.BBolCha.domain.board.repository.BoardRepository;
 import project.BBolCha.domain.board.repository.CommentRepository;
-import project.BBolCha.domain.board.repository.LikeRepository;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
+import project.BBolCha.global.exception.CustomException;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
+import static project.BBolCha.global.model.Result.NOT_MY_COMMENT;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -94,13 +92,37 @@ class CommentServiceTest {
         assertThat(response.getTotalElements()).isEqualTo(4L);
     }
 
-    private Comment saveAndRetrieveComment(User user, Board board, String note) {
-        Comment comment = Comment.builder()
-                .user(user)
-                .board(board)
-                .note(note)
-                .build();
-        return commentRepository.save(comment);
+    @DisplayName("내가 등록한 댓글을 삭제한다.")
+    @Test
+    void deleteCommentByUser() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+        Comment comment = saveAndRetrieveComment(user, board);
+
+        // when
+        commentService.deleteComment(comment.getId(), user);
+
+        // then
+        Optional<Comment> commentOptional = commentRepository.findById(comment.getId());
+        assertThat(commentOptional.isEmpty()).isTrue();
+    }
+
+    @DisplayName("내가 등록하지 않은 댓글을 삭제하려할때 CustomException 발생한다.")
+    @Test
+    void deleteCommentByNotUser() {
+        // given
+        User commentAddUser = saveAndRetrieveUser();
+        User notCommentAddUser = saveAndRetrieveUser();
+
+        Board board = saveAndRetrieveBoard(notCommentAddUser);
+        Comment comment = saveAndRetrieveComment(commentAddUser, board);
+
+        // when // then
+        assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), notCommentAddUser))
+                .isInstanceOf(CustomException.class)
+                .extracting("result").isEqualTo(NOT_MY_COMMENT);
+
     }
 
     // method
@@ -140,7 +162,6 @@ class CommentServiceTest {
 
         return boardRepository.save(board);
     }
-
     private User saveAndRetrieveUser() {
         Set<Authority> authoritySet = new HashSet<>();
         User user = User.builder()
@@ -152,5 +173,23 @@ class CommentServiceTest {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    private void saveAndRetrieveComment(User user, Board board, String note) {
+        Comment comment = Comment.builder()
+                .user(user)
+                .board(board)
+                .note(note)
+                .build();
+        commentRepository.save(comment);
+    }
+
+    private Comment saveAndRetrieveComment(User user, Board board) {
+        Comment comment = Comment.builder()
+                .user(user)
+                .board(board)
+                .note("테스트")
+                .build();
+        return commentRepository.save(comment);
     }
 }
