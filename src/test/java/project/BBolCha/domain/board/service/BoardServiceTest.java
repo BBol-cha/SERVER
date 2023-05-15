@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +18,7 @@ import project.BBolCha.domain.board.entity.Hint;
 import project.BBolCha.domain.board.entity.Like;
 import project.BBolCha.domain.board.entity.Tag;
 import project.BBolCha.domain.board.repository.BoardRepository;
+import project.BBolCha.domain.board.repository.LikeRepository;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
@@ -29,7 +27,6 @@ import project.BBolCha.global.exception.CustomException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static project.BBolCha.global.model.Result.NOT_MY_POST;
 
 @SpringBootTest
@@ -48,6 +45,9 @@ class BoardServiceTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -233,6 +233,48 @@ class BoardServiceTest {
 
         assertThat(response.getTotalPages()).isEqualTo(2);
         assertThat(response.getTotalElements()).isEqualTo(7L);
+    }
+
+    @DisplayName("내가 좋아요를 남기지 않은 게시글에 좋아요를 등록한다.")
+    @Test
+    void likeAddNotLikedBoardByUser() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        // when
+        BoardResponse.Likes response = boardService.toggleLike(board.getId(), user);
+
+        // then
+        assertThat(response.getIsLiked()).isTrue();
+
+        Optional<Like> likeOptional = likeRepository.findById(response.getId());
+        assertThat(likeOptional.isPresent()).isTrue();
+    }
+
+    @DisplayName("내가 좋아요를 남긴 게시글에 좋아요를 취소한다.")
+    @Test
+    void likeCancelLikedBoardByUser() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        Like like = Like.builder()
+                .id(1L)
+                .user(user)
+                .board(board)
+                .build();
+        likeRepository.save(like);
+
+        // when
+        BoardResponse.Likes response = boardService.toggleLike(board.getId(), user);
+
+        // then
+        assertThat(response.getIsLiked()).isFalse();
+
+        Optional<Like> likeOptional = likeRepository.findById(response.getId());
+
+        assertThat(likeOptional.isPresent()).isFalse();
     }
 
     // method

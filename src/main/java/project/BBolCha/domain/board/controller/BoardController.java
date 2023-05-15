@@ -3,9 +3,7 @@ package project.BBolCha.domain.board.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import project.BBolCha.domain.board.dto.BoardDto;
 import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
 import project.BBolCha.domain.board.dto.service.response.BoardResponse;
 import project.BBolCha.domain.board.service.BoardService;
@@ -65,7 +63,7 @@ public class BoardController {
 
     // 좋아요 등록 및 취소
     @PostMapping("board/like")
-    public CustomResponseEntity<BoardDto.LikeDto> toggleLike(
+    public CustomResponseEntity<BoardResponse.Likes> toggleLike(
             @RequestParam("id") Long id,
             @AuthenticationPrincipal User user
     ) {

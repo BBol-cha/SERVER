@@ -143,4 +143,16 @@ class BoardControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @DisplayName("좋아요 등록 및 취소 API")
+    @Test
+    void toggleLike() throws Exception {
+        // when // then
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/board/like")
+                        .param("id","1")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

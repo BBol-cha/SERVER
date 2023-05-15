@@ -6,11 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.board.dto.BoardDto;
-import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
 import project.BBolCha.domain.board.dto.service.request.BoardServiceRequest;
 import project.BBolCha.domain.board.dto.service.response.BoardResponse;
 import project.BBolCha.domain.board.entity.Board;
@@ -21,7 +18,6 @@ import project.BBolCha.domain.board.repository.BoardRepository;
 import project.BBolCha.domain.board.repository.LikeRepository;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
-import project.BBolCha.global.config.jwt.SecurityUtil;
 import project.BBolCha.global.exception.CustomException;
 import project.BBolCha.global.model.Result;
 
@@ -133,24 +129,24 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDto.LikeDto toggleLike(Long id, User user) {
+    public BoardResponse.Likes toggleLike(Long id, User user) {
         Board board = getBoard(id);
         Optional<Like> likeOptional = likeRepository.findByBoardAndUser(board, user);
 
         // 공감을 이미 했을 경우 취소
         if (likeOptional.isPresent()) {
-            Like like = likeOptional.get();
-            likeRepository.delete(like);
-            return BoardDto.LikeDto.response(false);
+            Like deleteLike = likeOptional.get();
+            likeRepository.delete(deleteLike);
+            return BoardResponse.Likes.response(deleteLike, false);
         }
 
         // 공감을 하지 않은 경우 등록
-        likeRepository.save(
+        Like saveLike = likeRepository.save(
                 Like.builder()
                         .board(board)
                         .user(user)
                         .build()
         );
-        return BoardDto.LikeDto.response(true);
+        return BoardResponse.Likes.response(saveLike, true);
     }
 }

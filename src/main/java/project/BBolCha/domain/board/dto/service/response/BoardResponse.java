@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.BBolCha.domain.board.entity.Board;
+import project.BBolCha.domain.board.entity.Like;
 
 import java.time.LocalDateTime;
 
@@ -115,6 +116,26 @@ public class BoardResponse {
                     .updatedAt(board.getUpdatedAt())
                     .tag(TagResponse.response(board.getTag()))
                     .hint(HintResponse.response(board.getHint()))
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    public static class Likes {
+        private Long id;
+        private Boolean isLiked;
+
+        @Builder
+        private Likes(Long id, Boolean isLiked) {
+            this.id = id;
+            this.isLiked = isLiked;
+        }
+
+        public static BoardResponse.Likes response(Like like, boolean isLiked) {
+            return Likes.builder()
+                    .id(like.getId())
+                    .isLiked(isLiked)
                     .build();
         }
     }
