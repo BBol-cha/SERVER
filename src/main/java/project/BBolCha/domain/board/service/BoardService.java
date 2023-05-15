@@ -127,7 +127,7 @@ public class BoardService {
          */
         Sort.Direction arrangeDirection = (arrange.equals("ASC")) ? ASC : DESC;
         Pageable pageWithTenElements = PageRequest.of(page - 1, limit, arrangeDirection, filter);
-        Page<Board> boardPage = boardRepository.findAll(pageWithTenElements);
+        Page<Board> boardPage = boardRepository.findAll(PageRequest.of(page - 1, limit, arrangeDirection, filter));
 
         return boardPage.map(BoardResponse.Detail::response);
     }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,8 +28,7 @@ import project.BBolCha.global.exception.CustomException;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static project.BBolCha.global.model.Result.NOT_MY_POST;
 
@@ -171,9 +171,68 @@ class BoardServiceTest {
         Board board = saveAndRetrieveBoard(postUser);
 
         // when // then
-        assertThatThrownBy(() ->boardService.deleteBoard(board.getId(), notPostUser))
+        assertThatThrownBy(() -> boardService.deleteBoard(board.getId(), notPostUser))
                 .isInstanceOf(CustomException.class)
                 .extracting("result").isEqualTo(NOT_MY_POST);
+    }
+
+    @DisplayName("게시글이 작성된 날짜 순으로 오름차순으로 정렬하여서 첫번째 페이지의 10개 항목을 가져온다.")
+    @Test
+    void shouldReturnFirstPageWithTenItemsOrderedByCreatedDate() {
+        // given
+        User user = saveAndRetrieveUser();
+
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+
+        // when
+        Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(1, 10, "createdAt", "ASC");
+
+        // then
+        assertThat(response)
+                .hasSize(4)
+                .extracting("id", "title")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, "test"),
+                        tuple(2L, "test"),
+                        tuple(3L, "test"),
+                        tuple(4L, "test")
+                );
+
+        assertThat(response.getTotalPages()).isEqualTo(1);
+        assertThat(response.getTotalElements()).isEqualTo(4L);
+    }
+
+    @DisplayName("게시글이 작성된 날짜 순으로 내림차순으로 정렬하여서 두번째 페이지의 5개 항목을 가져온다.")
+    @Test
+    void shouldReturnSecondPageWithFiveItemsOrderedByCreatedDate() {
+        // given
+        User user = saveAndRetrieveUser();
+
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user);
+
+        // when
+        Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(2, 5, "createdAt", "DESC");
+
+        // then
+        assertThat(response)
+                .hasSize(2)
+                .extracting("id", "title")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, "test"),
+                        tuple(2L, "test")
+                );
+
+        assertThat(response.getTotalPages()).isEqualTo(2);
+        assertThat(response.getTotalElements()).isEqualTo(7L);
     }
 
     // method

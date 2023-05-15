@@ -114,4 +114,33 @@ class BoardControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("게시글 페이지 조회 API")
+    @Test
+    void listSortedBoardsPerPage() throws Exception {
+        // when // then
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/board/list")
+                        .param("page", "1")
+                        .param("limit", "10")
+                        .param("filter","createdAt")
+                        .param("arrange","asc")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("게시글 페이지 조회를 할때 filter 값을 보내지 않았을 경우 400 에러가 발생한다.")
+    @Test
+    void listSortedBoardsPerPageWithNotAddFilterParameter() throws Exception {
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/board/list")
+                                .param("page", "1")
+                                .param("limit", "10")
+                                .param("arrange","asc")
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }
