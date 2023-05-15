@@ -1,11 +1,13 @@
 package project.BBolCha.domain.user.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.BBolCha.domain.ControllerTestSupport;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
+import project.BBolCha.domain.user.dto.service.request.UserServiceRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.entity.User;
 
@@ -87,11 +89,26 @@ class UserControllerTest extends ControllerTestSupport {
 
     @DisplayName("로그아웃 API")
     @Test
-    void test() throws Exception {
+    void logoutUser() throws Exception {
         // when // then
         mockMvc.perform(
                         MockMvcRequestBuilders.delete("/auth/logout")
                                 .header("Authorization", "testToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("회원정보 수정 API")
+    @Test
+    void updateUserNameAndProfileImageUrl() throws Exception {
+        // given
+        UserRequest.Update request = new UserRequest.Update("test","test");
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.patch("/auth")
+                                .content(objectMapper.writeValueAsString(request.toServiceRequest()))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());

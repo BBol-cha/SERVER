@@ -74,6 +74,7 @@ public class UserService {
     }
 
     // Service
+
     @Transactional
     public UserResponse.Login registerNewUser(UserServiceRequest.Registration request, HttpServletResponse response) {
 
@@ -126,6 +127,12 @@ public class UserService {
     }
 
     public UserResponse.Detail read(User user) {
+        return UserResponse.Detail.response(user);
+    }
+
+    @Transactional
+    public UserResponse.Detail update(UserServiceRequest.Update request, User user) {
+        user.updateNameAndProfileImageUrl(request.getName(), request.getProfileImageUrl());
         return UserResponse.Detail.response(user);
     }
 

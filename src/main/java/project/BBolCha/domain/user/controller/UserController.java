@@ -62,4 +62,12 @@ public class UserController {
     ) {
         return CustomResponseEntity.success(userService.logout(bearerToken.substring(7)));
     }
+
+    @PatchMapping("auth")
+    public CustomResponseEntity<UserResponse.Detail> updateUserNameAndProfileImageUrl(
+            @Valid @RequestBody UserRequest.Update request,
+            @AuthenticationPrincipal User user
+    ) {
+        return CustomResponseEntity.success(userService.update(request.toServiceRequest(), user));
+    }
 }

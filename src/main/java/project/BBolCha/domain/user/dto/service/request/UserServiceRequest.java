@@ -34,4 +34,17 @@ public class UserServiceRequest {
             this.password = password;
         }
     }
+
+    @NoArgsConstructor
+    @Getter
+    public static class Update {
+        private String name;
+        private String profileImageUrl;
+
+        @Builder
+        private Update(String name, String profileImageUrl) {
+            this.name = name;
+            this.profileImageUrl = profileImageUrl;
+        }
+    }
 }

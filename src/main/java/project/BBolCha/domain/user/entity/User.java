@@ -45,4 +45,9 @@ public class User {
         this.profileImageUrl = profileImageUrl;
         this.authorities = authorities;
     }
+
+    public void updateNameAndProfileImageUrl(String name, String profileImageUrl) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
+    }
 }

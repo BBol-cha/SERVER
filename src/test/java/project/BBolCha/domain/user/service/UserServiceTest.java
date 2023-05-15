@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
+import project.BBolCha.domain.user.dto.service.request.UserServiceRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
@@ -191,6 +192,27 @@ class UserServiceTest {
         return Collections.singleton(authority);
     }
 
+
+    @DisplayName("유저가 자신의 이름과 프로필 이미지를 변경한다")
+    @Test
+    void updateNameAndProfileImageUrl() {
+        // given
+        User user = saveAndRetrieveUser();
+
+        UserServiceRequest.Update request = UserServiceRequest.Update.builder()
+                .name("테스트 업데이트 계정")
+                .profileImageUrl("update_test_image.png")
+                .build();
+
+
+        // when
+        UserResponse.Detail response = userService.update(request,user);
+
+        // then
+        assertThat(response)
+                .extracting("name","profileImageUrl","email")
+                .contains("테스트 업데이트 계정","update_test_image.png","test@test.com");
+    }
 
     private User saveAndRetrieveUser() {
         User user = User.builder()

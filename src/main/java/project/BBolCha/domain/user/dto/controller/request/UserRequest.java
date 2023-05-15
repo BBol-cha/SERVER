@@ -59,4 +59,26 @@ public class UserRequest {
             this.password = password;
         }
     }
+
+    @NoArgsConstructor
+    @Getter
+    public static class Update {
+        @NotBlank
+        private String name;
+        @NotBlank
+        private String profileImageUrl;
+
+        public UserServiceRequest.Update toServiceRequest() {
+            return UserServiceRequest.Update.builder()
+                    .name(name)
+                    .profileImageUrl(profileImageUrl)
+                    .build();
+        }
+
+        // 테스트 생성자
+        public Update(String name, String profileImageUrl) {
+            this.name = name;
+            this.profileImageUrl = profileImageUrl;
+        }
+    }
 }
