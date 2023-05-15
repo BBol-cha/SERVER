@@ -75,7 +75,7 @@ class CommentServiceTest {
         saveAndRetrieveComment(user, board, "4");
 
         // when
-        Page<CommentResponse.Detail> response = commentService.fetchCommentsByPage(1L, 1);
+        Page<CommentResponse.Detail> response = commentService.fetchCommentsByPage(board.getId(), 1);
 
         // then
         assertThat(response)
@@ -162,6 +162,7 @@ class CommentServiceTest {
 
         return boardRepository.save(board);
     }
+
     private User saveAndRetrieveUser() {
         Set<Authority> authoritySet = new HashSet<>();
         User user = User.builder()

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,10 +178,10 @@ class BoardServiceTest {
         // given
         User user = saveAndRetrieveUser();
 
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user, "1_content");
+        saveAndRetrieveBoard(user, "2_content");
+        saveAndRetrieveBoard(user, "3_content");
+        saveAndRetrieveBoard(user, "4_content");
 
         // when
         Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(1, 10, "createdAt", "ASC");
@@ -190,12 +189,12 @@ class BoardServiceTest {
         // then
         assertThat(response)
                 .hasSize(4)
-                .extracting("id", "title")
+                .extracting("title", "content")
                 .containsExactlyInAnyOrder(
-                        tuple(1L, "test"),
-                        tuple(2L, "test"),
-                        tuple(3L, "test"),
-                        tuple(4L, "test")
+                        tuple("test", "1_content"),
+                        tuple("test", "2_content"),
+                        tuple("test", "3_content"),
+                        tuple("test", "4_content")
                 );
 
         assertThat(response.getTotalPages()).isEqualTo(1);
@@ -208,13 +207,13 @@ class BoardServiceTest {
         // given
         User user = saveAndRetrieveUser();
 
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
-        saveAndRetrieveBoard(user);
+        saveAndRetrieveBoard(user, "1_content");
+        saveAndRetrieveBoard(user, "2_content");
+        saveAndRetrieveBoard(user, "3_content");
+        saveAndRetrieveBoard(user, "4_content");
+        saveAndRetrieveBoard(user, "5_content");
+        saveAndRetrieveBoard(user, "6_content");
+        saveAndRetrieveBoard(user, "7_content");
 
         // when
         Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(2, 5, "createdAt", "DESC");
@@ -222,10 +221,10 @@ class BoardServiceTest {
         // then
         assertThat(response)
                 .hasSize(2)
-                .extracting("id", "title")
+                .extracting("title", "content")
                 .containsExactlyInAnyOrder(
-                        tuple(1L, "test"),
-                        tuple(2L, "test")
+                        tuple("test", "1_content"),
+                        tuple("test", "2_content")
                 );
 
         assertThat(response.getTotalPages()).isEqualTo(2);
@@ -275,6 +274,42 @@ class BoardServiceTest {
     }
 
     // method
+    private void saveAndRetrieveBoard(User user, String content) {
+        List<Like> likes = new ArrayList<>();
+
+        Board board = Board.builder()
+                .user(user)
+                .title("test")
+                .content(content)
+                .correct("testCorrect")
+                .contentImageUrl("test.png")
+                .like(likes)
+                .viewCount(5)
+                .build();
+
+        Tag tag = Tag.builder()
+                .board(board)
+                .horror(true)
+                .daily(true)
+                .romance(false)
+                .fantasy(false)
+                .sf(true)
+                .build();
+
+        Hint hint = Hint.builder()
+                .board(board)
+                .hintOne("1")
+                .hintTwo("2")
+                .hintThree("3")
+                .hintFour("4")
+                .hintFive("5")
+                .build();
+
+
+        board.saveTagAndHint(tag, hint);
+        boardRepository.save(board);
+    }
+
     private Board saveAndRetrieveBoard(User user) {
         List<Like> likes = new ArrayList<>();
 
