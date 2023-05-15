@@ -3,10 +3,9 @@ package project.BBolCha.domain.board.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import project.BBolCha.domain.board.dto.CommentDto;
 import project.BBolCha.domain.board.dto.controller.request.CommentRequest;
+import project.BBolCha.domain.board.dto.service.response.CommentResponse;
 import project.BBolCha.domain.board.service.CommentService;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.global.model.CustomResponseEntity;
@@ -31,8 +30,8 @@ public class CommentController {
 
     // 게시글 댓글 조회
     @GetMapping("board/list/comment")
-    public CustomResponseEntity<Page<CommentDto.DetailDto>> fetchCommentsByPage(
-            @RequestParam("id") Long id, @RequestParam Integer page
+    public CustomResponseEntity<Page<CommentResponse.Detail>> fetchCommentsByPage(
+            @RequestParam Long id, @RequestParam Integer page
     ) {
         return CustomResponseEntity.success(commentService.fetchCommentsByPage(id, page));
     }

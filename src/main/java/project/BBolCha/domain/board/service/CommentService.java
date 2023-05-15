@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BBolCha.domain.board.dto.CommentDto;
 import project.BBolCha.domain.board.dto.service.request.CommentServiceRequest;
+import project.BBolCha.domain.board.dto.service.response.CommentResponse;
 import project.BBolCha.domain.board.entity.Board;
 import project.BBolCha.domain.board.entity.Comment;
 import project.BBolCha.domain.board.repository.BoardRepository;
@@ -61,12 +61,12 @@ public class CommentService {
         return null;
     }
 
-    public Page<CommentDto.DetailDto> fetchCommentsByPage(Long id, Integer page) {
+    public Page<CommentResponse.Detail> fetchCommentsByPage(Long id, Integer page) {
         Board board = getBoard(id);
         Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createdAt");
         Page<Comment> commentPage = commentRepository.findByBoard(board, pageable);
 
-        return commentPage.map(CommentDto.DetailDto::response);
+        return commentPage.map(CommentResponse.Detail::response);
     }
 
     @Transactional

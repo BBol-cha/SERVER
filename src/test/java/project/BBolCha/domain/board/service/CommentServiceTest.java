@@ -4,10 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.dto.service.request.BoardServiceRequest;
 import project.BBolCha.domain.board.dto.service.request.CommentServiceRequest;
+import project.BBolCha.domain.board.dto.service.response.CommentResponse;
 import project.BBolCha.domain.board.entity.*;
 import project.BBolCha.domain.board.repository.BoardRepository;
 import project.BBolCha.domain.board.repository.CommentRepository;
@@ -19,6 +21,7 @@ import project.BBolCha.domain.user.repository.UserRepository;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -40,7 +43,7 @@ class CommentServiceTest {
 
     @DisplayName("유저가 게시글에 댓글을 등록한다.")
     @Test
-    void test() {
+    void addComment() {
         // given
         User user = saveAndRetrieveUser();
         Board board = saveAndRetrieveBoard(user);
@@ -57,8 +60,47 @@ class CommentServiceTest {
 
         assertThat(commentOptional.isPresent()).isTrue();
         assertThat(commentOptional.get())
-                .extracting("id","user","board")
-                .contains(1L,1L,1L);
+                .extracting("id", "user", "board", "note")
+                .contains(1L, 1L, 1L, "재밌어요");
+    }
+
+    @DisplayName("게시글에 댓글을 페이지 조회한다.")
+    @Test
+    void test() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        saveAndRetrieveComment(user, board, "1");
+        saveAndRetrieveComment(user, board, "2");
+        saveAndRetrieveComment(user, board, "3");
+        saveAndRetrieveComment(user, board, "4");
+
+        // when
+        Page<CommentResponse.Detail> response = commentService.fetchCommentsByPage(1L, 1);
+
+        // then
+        assertThat(response)
+                .hasSize(4)
+                .extracting("userName", "userProfileImageUrl", "note")
+                .containsExactlyInAnyOrder(
+                        tuple("테스트 계정","test.png","1"),
+                        tuple("테스트 계정","test.png","2"),
+                        tuple("테스트 계정","test.png","3"),
+                        tuple("테스트 계정","test.png","4")
+                );
+
+        assertThat(response.getTotalPages()).isEqualTo(1);
+        assertThat(response.getTotalElements()).isEqualTo(4L);
+    }
+
+    private Comment saveAndRetrieveComment(User user, Board board, String note) {
+        Comment comment = Comment.builder()
+                .user(user)
+                .board(board)
+                .note(note)
+                .build();
+        return commentRepository.save(comment);
     }
 
     // method

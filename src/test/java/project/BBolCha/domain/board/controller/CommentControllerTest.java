@@ -48,4 +48,17 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @DisplayName("게시글의 댓글들을 페이지로 조회한다.")
+    @Test
+    void fetchCommentsByPage() throws Exception {
+        // when // then
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/board/list/comment")
+                        .param("id","1")
+                        .param("page","1")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
