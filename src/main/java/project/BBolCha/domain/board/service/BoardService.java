@@ -104,13 +104,13 @@ public class BoardService {
     }
 
     @Transactional
-    public Void deleteBoard(Long id, UserDetails userDetails) {
+    public Void deleteBoard(Long id, User user) {
         Board board = getBoard(id);
-        String authorEmail = board.getUser().getEmail();
-        String email = userDetails.getUsername();
+        Long authorId = board.getUser().getId();
+        Long userId = user.getId();
 
-        if (authorEmail.equals(email) == false) {
-            throw new CustomException(Result.USER_EMAIL_MISMATCH);
+        if (authorId.equals(userId) == false) {
+            throw new CustomException(Result.NOT_MY_POST);
         }
 
         boardRepository.delete(board);

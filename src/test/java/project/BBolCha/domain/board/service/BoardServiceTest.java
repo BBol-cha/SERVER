@@ -23,14 +23,14 @@ import project.BBolCha.domain.board.repository.BoardRepository;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
+import project.BBolCha.global.exception.CustomException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static project.BBolCha.global.model.Result.NOT_MY_POST;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -113,7 +113,7 @@ class BoardServiceTest {
 
     @DisplayName("유저가 자신이 작성한 게시글을 제목, 내용, 정답, 이미지, 태그, 힌트를 수정한다.")
     @Test
-    void test() {
+    void updateBoard() {
         // given
         User user = saveAndRetrieveUser();
         Board board = saveAndRetrieveBoard(user);
@@ -147,6 +147,34 @@ class BoardServiceTest {
                 .contains("6", "7", "8", "9", "10");
     }
 
+    @DisplayName("자신이 작성한 글을 삭제한다.")
+    @Test
+    void deleteBoard() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        // when
+        boardService.deleteBoard(board.getId(), user);
+
+        // then
+        Optional<Board> boardOptional = boardRepository.findById(board.getId());
+        assertThat(boardOptional.isEmpty()).isTrue();
+    }
+
+    @DisplayName("자신이 작성하지 않은 글을 삭제하려 할때 CustomException 발생한다.")
+    @Test
+    void deleteBoardWithNotMyPost() {
+        // given
+        User postUser = saveAndRetrieveUser();
+        User notPostUser = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(postUser);
+
+        // when // then
+        assertThatThrownBy(() ->boardService.deleteBoard(board.getId(), notPostUser))
+                .isInstanceOf(CustomException.class)
+                .extracting("result").isEqualTo(NOT_MY_POST);
+    }
 
     // method
     private Board saveAndRetrieveBoard(User user) {

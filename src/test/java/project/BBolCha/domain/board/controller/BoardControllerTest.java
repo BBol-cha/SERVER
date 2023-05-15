@@ -9,10 +9,7 @@ import project.BBolCha.domain.ControllerTestSupport;
 import project.BBolCha.domain.board.dto.controller.request.BoardRequest;
 import project.BBolCha.domain.board.dto.controller.request.HintRequest;
 import project.BBolCha.domain.board.dto.controller.request.TagRequest;
-import project.BBolCha.domain.board.entity.Hint;
-import project.BBolCha.domain.board.entity.Tag;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -105,5 +102,16 @@ class BoardControllerTest extends ControllerTestSupport {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("게시글 삭제 API")
+    @Test
+    void deleteBoard() throws Exception {
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/board/{id}", 1)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }

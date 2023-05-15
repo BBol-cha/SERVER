@@ -50,9 +50,9 @@ public class BoardController {
     @DeleteMapping("board/{id}")
     public CustomResponseEntity<Void> deleteBoard(
             @PathVariable Long id,
-            @AuthenticationPrincipal final UserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(boardService.deleteBoard(id, userDetails));
+        return CustomResponseEntity.success(boardService.deleteBoard(id, user));
     }
 
     // 게시글 페이지 조회

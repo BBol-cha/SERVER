@@ -15,8 +15,7 @@ public enum Result {
 
     NOT_FOUND_BOARD(-1,"존재하지 않는 게시물입니다."),
     NOT_MY_POST(-1,"본인이 작성한 게시물이 아닙니다."),
-    NOT_FOUND_COMMENT(-1,"존재하지 않는 댓글입니다."),
-    USER_EMAIL_MISMATCH(-1, "작성자와 현재 유저가 일치하지 않습니다.");
+    NOT_FOUND_COMMENT(-1,"존재하지 않는 댓글입니다.");
 
     private final int code;
     private final String message;
