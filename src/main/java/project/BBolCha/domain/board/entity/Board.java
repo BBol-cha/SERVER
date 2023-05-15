@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,7 +46,7 @@ public class Board extends BaseEntity implements Serializable{
     private Integer viewCount;
 
     @OneToMany(mappedBy = "board")
-    private List<Like> like;
+    private List<Like> like = new ArrayList<>();
 
     @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
     private Tag tag;
@@ -81,10 +82,7 @@ public class Board extends BaseEntity implements Serializable{
     }
 
     public void saveTagAndHint(Tag tag, Hint hint) {
-        tag.setBoard(this);
         this.tag = tag;
-
-        hint.setBoard(this);
         this.hint = hint;
     }
 }

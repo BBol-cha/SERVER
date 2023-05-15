@@ -28,7 +28,7 @@ public class BoardController {
 
     // 게시글 상세 조회
     @GetMapping("board/list/{id}")
-    public CustomResponseEntity<BoardDto.DetailDto> findBoard(
+    public CustomResponseEntity<BoardResponse.Detail> findBoard(
             @PathVariable("id") Long id
     ) {
         return CustomResponseEntity.success(boardService.findBoard(id));
@@ -36,7 +36,7 @@ public class BoardController {
 
     // 게시글 수정
     @PatchMapping("board/{id}")
-    public CustomResponseEntity<BoardDto.DetailDto> updateBoard(
+    public CustomResponseEntity<BoardResponse.Detail> updateBoard(
             @PathVariable Long id, @RequestBody BoardDto.UpdateDto request
     ) {
         return CustomResponseEntity.success(boardService.updateBoard(id, request));
@@ -53,7 +53,7 @@ public class BoardController {
 
     // 게시글 페이지 조회
     @GetMapping("board/list")
-    public CustomResponseEntity<Page<BoardDto.DetailDto>> listSortedBoardsPerPage(
+    public CustomResponseEntity<Page<BoardResponse.Detail>> listSortedBoardsPerPage(
             @RequestParam Integer page, @RequestParam Integer limit, @RequestParam String filter, @RequestParam String arrange
     ) {
         return CustomResponseEntity.success(boardService.listSortedBoardsPerPage(page, limit, filter, arrange));

@@ -63,6 +63,7 @@ public class UserController {
         return CustomResponseEntity.success(userService.logout(bearerToken.substring(7)));
     }
 
+    // 회원정보 수정
     @PatchMapping("auth")
     public CustomResponseEntity<UserResponse.Detail> updateUserNameAndProfileImageUrl(
             @Valid @RequestBody UserRequest.Update request,

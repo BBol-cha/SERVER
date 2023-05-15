@@ -46,18 +46,17 @@ public class BoardService {
 
     @Transactional
     public BoardResponse.Save createBoard(BoardServiceRequest.Save request, User user) {
-        Board board = boardRepository.save(
-                Board.builder()
-                        .user(user)
-                        .title(request.getTitle())
-                        .content(request.getContent())
-                        .correct(request.getCorrect())
-                        .contentImageUrl(request.getContentImageUrl())
-                        .viewCount(0)
-                        .build()
-        );
+        Board boardEntity = Board.builder()
+                .user(user)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .correct(request.getCorrect())
+                .contentImageUrl(request.getContentImageUrl())
+                .viewCount(0)
+                .build();
 
         Tag tag = Tag.builder()
+                .board(boardEntity)
                 .horror(request.getTag().getHorror())
                 .daily(request.getTag().getDaily())
                 .romance(request.getTag().getRomance())
@@ -66,6 +65,7 @@ public class BoardService {
                 .build();
 
         Hint hint = Hint.builder()
+                .board(boardEntity)
                 .hintOne(request.getHint().getHintOne())
                 .hintTwo(request.getHint().getHintTwo())
                 .hintThree(request.getHint().getHintThree())
@@ -73,24 +73,26 @@ public class BoardService {
                 .hintFive(request.getHint().getHintFive())
                 .build();
 
-        board.saveTagAndHint(tag, hint);
+        boardEntity.saveTagAndHint(tag, hint);
 
-        return BoardResponse.Save.of(board);
+        Board savedBoard = boardRepository.save(boardEntity);
+
+        return BoardResponse.Save.of(savedBoard);
     }
 
     @Transactional
-    public BoardDto.DetailDto findBoard(Long id) {
+    public BoardResponse.Detail findBoard(Long id) {
         Board board = getBoard(id);
 
-        return BoardDto.DetailDto.response(board);
+        return BoardResponse.Detail.response(board);
     }
 
     @Transactional
-    public BoardDto.DetailDto updateBoard(Long id, BoardDto.UpdateDto request) {
+    public BoardResponse.Detail updateBoard(Long id, BoardDto.UpdateDto request) {
         Board board = getBoard(id);
         board.updateBoard(request);
 
-        return BoardDto.DetailDto.response(board);
+        return BoardResponse.Detail.response(board);
     }
 
     @Transactional
@@ -108,7 +110,7 @@ public class BoardService {
     }
 
     @Transactional
-    public Page<BoardDto.DetailDto> listSortedBoardsPerPage(
+    public Page<BoardResponse.Detail> listSortedBoardsPerPage(
             Integer page, Integer limit, String filter, String arrange
     ) {
         /*
@@ -119,7 +121,7 @@ public class BoardService {
         Pageable pageWithTenElements = PageRequest.of(page - 1, limit, arrangeDirection, filter);
         Page<Board> boardPage = boardRepository.findAll(pageWithTenElements);
 
-        return boardPage.map(BoardDto.DetailDto::response);
+        return boardPage.map(BoardResponse.Detail::response);
     }
 
     @Transactional

@@ -56,7 +56,7 @@ public class UserService {
         return Collections.singleton(authority);
     }
 
-    private Authentication getAuthentication(String email, String password) {
+    private Authentication setAuthenticationAndReturn(String email, String password) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -88,7 +88,7 @@ public class UserService {
                         .build()
         );
 
-        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        Authentication authentication = setAuthenticationAndReturn(request.getEmail(), request.getPassword());
         String rtk = tokenProvider.createRefreshToken(request.getEmail());
         setHttpOnlyCookie(response, rtk);
 
@@ -106,7 +106,7 @@ public class UserService {
 
         LOGIN_VALIDATE(request, user);
 
-        Authentication authentication = getAuthentication(request.getEmail(), request.getPassword());
+        Authentication authentication = setAuthenticationAndReturn(request.getEmail(), request.getPassword());
         String refreshToken = tokenProvider.createRefreshToken(request.getEmail());
         setHttpOnlyCookie(response, refreshToken);
 

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "board_like")
 @Getter
 @Entity
