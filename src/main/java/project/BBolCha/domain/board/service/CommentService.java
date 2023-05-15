@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BBolCha.domain.board.dto.CommentDto;
+import project.BBolCha.domain.board.dto.service.request.CommentServiceRequest;
 import project.BBolCha.domain.board.entity.Board;
 import project.BBolCha.domain.board.entity.Comment;
 import project.BBolCha.domain.board.repository.BoardRepository;
@@ -20,6 +21,7 @@ import project.BBolCha.global.model.Result;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentService {
     private final UserRepository userRepository;
@@ -46,8 +48,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Void addComment(Long id, CommentDto.AddDto request, UserDetails userDetails) {
-        User user = getUser(userDetails);
+    public Void addComment(Long id, CommentServiceRequest.Add request, User user) {
         Board board = getBoard(id);
 
         commentRepository.save(
@@ -60,7 +61,6 @@ public class CommentService {
         return null;
     }
 
-    @Transactional
     public Page<CommentDto.DetailDto> fetchCommentsByPage(Long id, Integer page) {
         Board board = getBoard(id);
         Pageable pageable = PageRequest.of(page - 1, 10, DESC, "createdAt");
@@ -69,6 +69,7 @@ public class CommentService {
         return commentPage.map(CommentDto.DetailDto::response);
     }
 
+    @Transactional
     public Void deleteComment(Long id) {
         Comment comment = getComment(id);
 

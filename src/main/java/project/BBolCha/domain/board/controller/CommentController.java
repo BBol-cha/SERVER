@@ -6,8 +6,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import project.BBolCha.domain.board.dto.CommentDto;
+import project.BBolCha.domain.board.dto.controller.request.CommentRequest;
 import project.BBolCha.domain.board.service.CommentService;
+import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.global.model.CustomResponseEntity;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +23,10 @@ public class CommentController {
     @PostMapping("board/comment")
     public CustomResponseEntity<Void> addComment(
             @RequestParam Long id,
-            @RequestBody CommentDto.AddDto request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @Valid @RequestBody CommentRequest.Add request,
+            @AuthenticationPrincipal User user
     ) {
-        return CustomResponseEntity.success(commentService.addComment(id, request, userDetails));
+        return CustomResponseEntity.success(commentService.addComment(id, request.toServiceRequest(), user));
     }
 
     // 게시글 댓글 조회

@@ -27,7 +27,7 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
-@Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
@@ -76,10 +76,8 @@ public class BoardService {
         return BoardResponse.Save.of(savedBoard);
     }
 
-    @Transactional
     public BoardResponse.Detail findBoard(Long id) {
         Board board = getBoard(id);
-
         return BoardResponse.Detail.response(board);
     }
 
@@ -113,7 +111,6 @@ public class BoardService {
         return null;
     }
 
-    @Transactional
     public Page<BoardResponse.Detail> listSortedBoardsPerPage(
             Integer page, Integer limit, String filter, String arrange
     ) {

@@ -139,7 +139,6 @@ class UserServiceTest {
     void userDetailsRead() {
         // given
         User user = saveAndRetrieveUser();
-        saveSecurityContextHolderAndGetAuthentication();
 
         // when
         UserResponse.Detail response = userService.read(user);

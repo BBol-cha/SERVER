@@ -10,12 +10,6 @@ import java.time.LocalDateTime;
 
 public class CommentDto {
 
-    @Getter
-    @NoArgsConstructor
-    public static class AddDto {
-        private String note;
-    }
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter

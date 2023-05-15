@@ -38,9 +38,6 @@ class BoardServiceTest {
     private BoardService boardService;
 
     @Autowired
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
