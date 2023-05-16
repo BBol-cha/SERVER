@@ -3,7 +3,6 @@ package project.BBolCha.docs.user;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.BBolCha.docs.RestDocsSupport;
@@ -44,8 +43,8 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         .id(1L)
                         .email("test@test.com")
                         .name("테스트 계정")
-                        .profileImageUrl("test.png")
-                        .accessToken("accessToken")
+                        .profileImageUrl("null")
+                        .accessToken("issued accessToken")
                         .build()
                 );
 

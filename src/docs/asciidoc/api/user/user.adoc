@@ -1,0 +1,10 @@
+[[user-register]]
+=== 회원가입 API
+
+==== HTTP Request
+include::{snippets}/user-register/http-request.adoc[]
+include::{snippets}/user-register/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-register/http-response.adoc[]
+include::{snippets}/user-register/response-fields.adoc[]
