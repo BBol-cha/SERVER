@@ -8,20 +8,19 @@ import org.springframework.test.context.ActiveProfiles;
 import project.BBolCha.global.model.CustomResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class VersionControllerTest {
+class CommonControllerTest {
 
     @Autowired
-    private VersionController versionController;
+    private CommonController commonController;
 
     @DisplayName("현재 Version이 몇인지 확인한다.")
     @Test
     void verSionTest() {
         // when
-        CustomResponseEntity<String> response = versionController.version();
+        CustomResponseEntity<String> response = commonController.version();
 
         // then
         assertThat(response)

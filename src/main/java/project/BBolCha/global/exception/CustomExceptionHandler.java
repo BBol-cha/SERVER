@@ -82,7 +82,7 @@ public class CustomExceptionHandler {
                 request.getRequestURI(), e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
 
         return CustomResponseEntity.builder()
-                .code(-1)
+                .code(-1000)
                 .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
                 .build();
     }
@@ -99,7 +99,7 @@ public class CustomExceptionHandler {
         log.error("url {}, message: {}",
                 request.getRequestURI(), e.getParameterName() + " 값이 등록되지 않았습니다.");
         return CustomResponseEntity.builder()
-                .code(-1)
+                .code(-1000)
                 .message(e.getParameterName() + " 값이 등록되지 않았습니다.")
                 .build();
     }
@@ -116,7 +116,7 @@ public class CustomExceptionHandler {
         log.error("url {}, message: {}",
                 request.getRequestURI(), e.getRequestPartName() + " 값을 요청받지 못했습니다.");
         return CustomResponseEntity.builder()
-                .code(-1)
+                .code(-1000)
                 .message("{ " + e.getRequestPartName() + " }"+ " 값을 요청받지 못했습니다.")
                 .build();
     }
@@ -133,7 +133,7 @@ public class CustomExceptionHandler {
         log.error("url {}, message: {}",
                 request.getRequestURI(), e.getHeaderName() + " 값을 요청받지 못했습니다.");
         return CustomResponseEntity.builder()
-                .code(-1)
+                .code(-1000)
                 .message("{ " + e.getHeaderName() + " }"+ " 값을 요청받지 못했습니다.")
                 .build();
     }
