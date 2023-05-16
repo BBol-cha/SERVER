@@ -589,3 +589,7 @@ gradle-app.setting
 src/main/resources/application.yml
 
 src/main/resources/db/mysql/data.sql
+
+src/main/resources/db/h2/data.sql
+
+src/test/resources/application.yml
