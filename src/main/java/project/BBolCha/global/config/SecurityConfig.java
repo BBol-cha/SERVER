@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/board/list", "/board/list/{id}", "/board/list/comment/{bid}").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/docs/**").permitAll()
+                .antMatchers("/docs/index.html").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
