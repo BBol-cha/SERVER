@@ -39,4 +39,40 @@ include::{snippets}/board-update/request-fields.adoc[]
 include::{snippets}/board-update/http-response.adoc[]
 include::{snippets}/board-update/response-fields.adoc[]
 
+[[board-delete]]
+=== 게시글 삭제 API
+
+==== HTTP Request Header
+include::{snippets}/board-delete/request-headers.adoc[]
+
+==== HTTP Request PathVariable
+include::{snippets}/board-delete/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-delete/http-response.adoc[]
+include::{snippets}/board-delete/response-fields.adoc[]
+
+[[board-page]]
+=== 게시글 페이지 조회 API
+
+==== HTTP Request Param
+include::{snippets}/board-page/http-request.adoc[]
+include::{snippets}/board-page/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-page/http-response.adoc[]
+include::{snippets}/board-page/response-fields.adoc[]
+
+[[board-toggleLike]]
+=== 게시글 좋아요 등록 및 취소 API
+
+==== HTTP Request Param
+include::{snippets}/board-toggleLike/http-request.adoc[]
+include::{snippets}/board-toggleLike/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-toggleLike/http-response.adoc[]
+include::{snippets}/board-toggleLike/response-fields.adoc[]
+
+
 
