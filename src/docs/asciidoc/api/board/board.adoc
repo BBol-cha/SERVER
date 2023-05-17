@@ -1,0 +1,42 @@
+[[board-create]]
+=== 게시글 작성 API
+
+==== HTTP Request Header
+include::{snippets}/board-create/request-headers.adoc[]
+
+==== HTTP Request
+include::{snippets}/board-create/http-request.adoc[]
+include::{snippets}/board-create/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-create/http-response.adoc[]
+include::{snippets}/board-create/response-fields.adoc[]
+
+[[board-detail]]
+=== 게시글 상세 조회 API
+
+==== HTTP Request PathVariable
+include::{snippets}/board-detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-detail/http-response.adoc[]
+include::{snippets}/board-detail/response-fields.adoc[]
+
+[[board-update]]
+=== 게시글 수정 API
+
+==== HTTP Request Header
+include::{snippets}/board-update/request-headers.adoc[]
+
+==== HTTP Request PathVariable
+include::{snippets}/board-update/path-parameters.adoc[]
+
+==== HTTP Request
+include::{snippets}/board-update/http-request.adoc[]
+include::{snippets}/board-update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/board-update/http-response.adoc[]
+include::{snippets}/board-update/response-fields.adoc[]
+
+
