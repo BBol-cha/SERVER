@@ -1,0 +1,41 @@
+[[comment-add]]
+=== 댓글 작성 API
+
+==== HTTP Request Header
+include::{snippets}/comment-add/request-headers.adoc[]
+
+==== HTTP Request Param
+include::{snippets}/comment-add/request-parameters.adoc[]
+
+==== HTTP Request
+include::{snippets}/comment-add/http-request.adoc[]
+include::{snippets}/comment-add/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/comment-add/http-response.adoc[]
+include::{snippets}/comment-add/response-fields.adoc[]
+
+[[comment-page]]
+=== 댓글 페이지 조회 API
+
+==== HTTP Param
+include::{snippets}/comment-page/http-request.adoc[]
+include::{snippets}/comment-page/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/comment-page/http-response.adoc[]
+include::{snippets}/comment-page/response-fields.adoc[]
+
+[[comment-delete]]
+=== 댓글 삭제 API
+
+==== HTTP Request Header
+include::{snippets}/comment-delete/request-headers.adoc[]
+
+==== HTTP Request Param
+include::{snippets}/comment-delete/http-request.adoc[]
+include::{snippets}/comment-delete/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/comment-delete/http-response.adoc[]
+include::{snippets}/comment-delete/response-fields.adoc[]

@@ -12,7 +12,12 @@ endif::[]
 [[User-API]]
 == OverView
 include::overview/test/common.adoc[]
+
 == User API
 include::api/user/user.adoc[]
+
 == Board API
 include::api/board/board.adoc[]
+
+== Comment API
+include::api/board/comment.adoc[]
