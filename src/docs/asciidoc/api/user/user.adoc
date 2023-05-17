@@ -8,3 +8,64 @@ include::{snippets}/user-register/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/user-register/http-response.adoc[]
 include::{snippets}/user-register/response-fields.adoc[]
+
+[[user-login]]
+=== 로그인 API
+
+==== HTTP Request
+include::{snippets}/user-login/http-request.adoc[]
+include::{snippets}/user-login/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-login/http-response.adoc[]
+include::{snippets}/user-login/response-fields.adoc[]
+
+[[user-readInfo]]
+=== 내 정보 조회 API
+
+==== HTTP Request Header
+include::{snippets}/user-readInfo/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-readInfo/http-response.adoc[]
+include::{snippets}/user-readInfo/response-fields.adoc[]
+
+[[user-reissueToken]]
+=== AccessToken 재발급 API
+
+==== HTTP Request Cookie
+|===
+|Cookie Name |Cookie Value
+
+|`+refreshToken+`
+|JWT_RefreshToken
+
+|===
+
+==== HTTP Response
+include::{snippets}/user-reissue/http-response.adoc[]
+include::{snippets}/user-reissue/response-fields.adoc[]
+
+[[user-logout]]
+=== 로그아웃 API
+
+==== HTTP Request Header
+include::{snippets}/user-logout/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-logout/http-response.adoc[]
+include::{snippets}/user-logout/response-fields.adoc[]
+
+[[user-update]]
+=== 유저 정보 수정 API
+
+==== HTTP Request Header
+include::{snippets}/user-update/request-headers.adoc[]
+
+==== HTTP Request
+include::{snippets}/user-update/http-request.adoc[]
+include::{snippets}/user-update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-update/http-response.adoc[]
+include::{snippets}/user-update/response-fields.adoc[]

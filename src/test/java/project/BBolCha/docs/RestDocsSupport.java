@@ -12,7 +12,6 @@ import project.BBolCha.domain.ControllerTestSupport;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
 @ExtendWith(RestDocumentationExtension.class)
-// SpringBootTest
 public abstract class RestDocsSupport {
 
     protected MockMvc mockMvc;
