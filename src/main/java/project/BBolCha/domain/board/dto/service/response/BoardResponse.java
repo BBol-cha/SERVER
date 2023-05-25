@@ -1,8 +1,7 @@
 package project.BBolCha.domain.board.dto.service.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
+import lombok.*;
 import project.BBolCha.domain.board.entity.Board;
 import project.BBolCha.domain.board.entity.Like;
 
@@ -66,7 +65,10 @@ public class BoardResponse {
     }
 
     @NoArgsConstructor
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder
     @Getter
+    @ToString
     public static class Detail {
         private Long id;
         private String authorName;
@@ -78,29 +80,18 @@ public class BoardResponse {
         private Integer viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private TagResponse tag;
-        private HintResponse hint;
 
-        @Builder
-        public Detail(
-                Long id, String authorName, String title,
-                String content, String correct, String contentImageUrl,
-                Integer likeCount, Integer viewCount, LocalDateTime createdAt,
-                LocalDateTime updatedAt, TagResponse tag, HintResponse hint
-        ) {
-            this.id = id;
-            this.authorName = authorName;
-            this.title = title;
-            this.content = content;
-            this.correct = correct;
-            this.contentImageUrl = contentImageUrl;
-            this.likeCount = likeCount;
-            this.viewCount = viewCount;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
-            this.tag = tag;
-            this.hint = hint;
-        }
+        private Boolean horror;
+        private Boolean daily;
+        private Boolean romance;
+        private Boolean fantasy;
+        private Boolean sf;
+
+        private String hintOne;
+        private String hintTwo;
+        private String hintThree;
+        private String hintFour;
+        private String hintFive;
 
         public static BoardResponse.Detail response(Board board) {
             return BoardResponse.Detail.builder()
@@ -114,8 +105,16 @@ public class BoardResponse {
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
-                    .tag(TagResponse.response(board.getTag()))
-                    .hint(HintResponse.response(board.getHint()))
+                    .horror(board.getTag().getHorror())
+                    .daily(board.getTag().getDaily())
+                    .romance(board.getTag().getRomance())
+                    .fantasy(board.getTag().getFantasy())
+                    .sf(board.getTag().getSf())
+                    .hintOne(board.getHint().getHintOne())
+                    .hintTwo(board.getHint().getHintTwo())
+                    .hintThree(board.getHint().getHintThree())
+                    .hintFour(board.getHint().getHintFour())
+                    .hintFive(board.getHint().getHintFive())
                     .build();
         }
     }

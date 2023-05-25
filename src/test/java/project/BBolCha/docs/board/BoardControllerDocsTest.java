@@ -244,8 +244,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                         .viewCount(0)
                         .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                         .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
-                        .tag(TagResponse.response(tag))
-                        .hint(HintResponse.response(hint))
                         .build()
                 );
 
@@ -362,8 +360,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                         .viewCount(0)
                         .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                         .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
-                        .tag(TagResponse.response(tag))
-                        .hint(HintResponse.response(hint))
                         .build()
                 );
 
@@ -536,8 +532,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                 .viewCount(0)
                 .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                 .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
-                .tag(TagResponse.response(tag))
-                .hint(HintResponse.response(hint))
                 .build();
 
         List<BoardResponse.Detail> boardDetailList = List.of(boardDetail);
