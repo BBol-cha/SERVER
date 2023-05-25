@@ -1,13 +1,11 @@
 package project.BBolCha.domain.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import project.BBolCha.domain.ControllerTestSupport;
 import project.BBolCha.domain.user.dto.controller.request.UserRequest;
-import project.BBolCha.domain.user.dto.service.request.UserServiceRequest;
 import project.BBolCha.domain.user.dto.service.responce.UserResponse;
 import project.BBolCha.domain.user.entity.User;
 

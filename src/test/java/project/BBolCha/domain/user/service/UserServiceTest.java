@@ -43,7 +43,6 @@ class UserServiceTest {
     @Autowired
     private RedisDao redisDao;
 
-
     @Autowired
     private TokenProvider tokenProvider;
 

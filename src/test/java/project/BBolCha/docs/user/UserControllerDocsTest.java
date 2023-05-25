@@ -145,8 +145,6 @@ public class UserControllerDocsTest extends RestDocsSupport {
     @DisplayName("정보 조회 API")
     @Test
     void readInfo() throws Exception {
-        User user = User.builder().build();
-
         // given
         given(userService.read(any(User.class)))
                 .willReturn(UserResponse.Detail.builder()

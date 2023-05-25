@@ -43,7 +43,9 @@ public class UserController {
 
     // 정보 조회
     @GetMapping("auth/info")
-    public CustomResponseEntity<UserResponse.Detail> read(@AuthenticationPrincipal User user) {
+    public CustomResponseEntity<UserResponse.Detail> read(
+            @AuthenticationPrincipal User user
+    ) {
         return CustomResponseEntity.success(userService.read(user));
     }
 
