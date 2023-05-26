@@ -191,12 +191,12 @@ class BoardServiceTest {
         // then
         assertThat(response)
                 .hasSize(4)
-                .extracting("title", "content")
+                .extracting("title", "content", "authorName")
                 .containsExactlyInAnyOrder(
-                        tuple("test", "1_content"),
-                        tuple("test", "2_content"),
-                        tuple("test", "3_content"),
-                        tuple("test", "4_content")
+                        tuple("test", "1_content", "테스트 계정"),
+                        tuple("test", "2_content", "테스트 계정"),
+                        tuple("test", "3_content", "테스트 계정"),
+                        tuple("test", "4_content", "테스트 계정")
                 );
 
         assertThat(response.getTotalPages()).isEqualTo(1);
@@ -223,10 +223,10 @@ class BoardServiceTest {
         // then
         assertThat(response)
                 .hasSize(2)
-                .extracting("title", "content")
+                .extracting("title", "content", "authorName")
                 .containsExactlyInAnyOrder(
-                        tuple("test", "1_content"),
-                        tuple("test", "2_content")
+                        tuple("test", "6_content", "테스트 계정"),
+                        tuple("test", "7_content", "테스트 계정")
                 );
 
         assertThat(response.getTotalPages()).isEqualTo(2);

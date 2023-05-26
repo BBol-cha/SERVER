@@ -76,7 +76,7 @@ public class BoardResponse {
         private String content;
         private String correct;
         private String contentImageUrl;
-        private Integer likeCount;
+        private Long likeCount;
         private Integer viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -101,7 +101,7 @@ public class BoardResponse {
                     .content(board.getContent())
                     .correct(board.getCorrect())
                     .contentImageUrl(board.getContentImageUrl())
-                    .likeCount(board.getLike().size())
+                    .likeCount((long) board.getLike().size())
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())

@@ -1,6 +1,9 @@
 package project.BBolCha.domain.board.repository;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -30,30 +33,31 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
 
     @Override
     public Page<BoardResponse.Detail> getPageBoardsAsDto(Pageable pageable) {
+        QLike likes = new QLike("likes");
         List<BoardResponse.Detail> content = queryFactory
                 .select(Projections.fields(BoardResponse.Detail.class,
                         board.id.as("id"),
-                        board.user.name.as("authorName"),
+                        user.name.as("authorName"),
                         board.title.as("title"),
                         board.content.as("content"),
                         board.correct.as("correct"),
                         board.contentImageUrl.as("contentImageUrl"),
-                        board.like.size().as("likeCount"),
+                        ExpressionUtils.as(getLikeCountQuery(likes), "likeCount"),
                         board.viewCount.as("viewCount"),
                         board.createdAt.as("createdAt"),
                         board.updatedAt.as("updatedAt"),
 
-                        board.tag.horror,
-                        board.tag.daily,
-                        board.tag.romance,
-                        board.tag.fantasy,
-                        board.tag.sf,
+                        tag.horror,
+                        tag.daily,
+                        tag.romance,
+                        tag.fantasy,
+                        tag.sf,
 
-                        board.hint.hintOne,
-                        board.hint.hintTwo,
-                        board.hint.hintThree,
-                        board.hint.hintFour,
-                        board.hint.hintFive
+                        hint.hintOne,
+                        hint.hintTwo,
+                        hint.hintThree,
+                        hint.hintFour,
+                        hint.hintFive
                 ))
                 .from(board)
                 .leftJoin(board.user, user)
@@ -69,5 +73,12 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                 .from(board);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private static JPQLQuery<Long> getLikeCountQuery(QLike likes) {
+        return JPAExpressions
+                .select(likes.count())
+                .from(likes)
+                .where(likes.board.id.eq(board.id));
     }
 }
