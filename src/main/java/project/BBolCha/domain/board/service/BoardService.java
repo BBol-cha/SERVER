@@ -1,10 +1,8 @@
 package project.BBolCha.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,44 +32,15 @@ public class BoardService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
-    private Board getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(Result.NOT_FOUND_BOARD)
-        );
-    }
-
     @Transactional
     public BoardResponse.Save createBoard(BoardServiceRequest.Save request, User user) {
-        Board boardEntity = Board.builder()
-                .user(user)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .correct(request.getCorrect())
-                .contentImageUrl(request.getContentImageUrl())
-                .viewCount(0)
-                .build();
+        Board board = toEntityBoard(request, user);
+        Tag tag = toEntityTag(request, board);
+        Hint hint = toEntityHint(request, board);
 
-        Tag tag = Tag.builder()
-                .board(boardEntity)
-                .horror(request.getTag().getHorror())
-                .daily(request.getTag().getDaily())
-                .romance(request.getTag().getRomance())
-                .fantasy(request.getTag().getFantasy())
-                .sf(request.getTag().getSf())
-                .build();
+        board.saveTagAndHint(tag, hint);
 
-        Hint hint = Hint.builder()
-                .board(boardEntity)
-                .hintOne(request.getHint().getHintOne())
-                .hintTwo(request.getHint().getHintTwo())
-                .hintThree(request.getHint().getHintThree())
-                .hintFour(request.getHint().getHintFour())
-                .hintFive(request.getHint().getHintFive())
-                .build();
-
-        boardEntity.saveTagAndHint(tag, hint);
-
-        Board savedBoard = boardRepository.save(boardEntity);
+        Board savedBoard = boardRepository.save(board);
 
         return BoardResponse.Save.of(savedBoard);
     }
@@ -142,5 +111,44 @@ public class BoardService {
                         .build()
         );
         return BoardResponse.Likes.response(saveLike, true);
+    }
+
+    private static Hint toEntityHint(BoardServiceRequest.Save request, Board board) {
+        return Hint.builder()
+                .board(board)
+                .hintOne(request.getHint().getHintOne())
+                .hintTwo(request.getHint().getHintTwo())
+                .hintThree(request.getHint().getHintThree())
+                .hintFour(request.getHint().getHintFour())
+                .hintFive(request.getHint().getHintFive())
+                .build();
+    }
+
+    private static Tag toEntityTag(BoardServiceRequest.Save request, Board board) {
+        return Tag.builder()
+                .board(board)
+                .horror(request.getTag().getHorror())
+                .daily(request.getTag().getDaily())
+                .romance(request.getTag().getRomance())
+                .fantasy(request.getTag().getFantasy())
+                .sf(request.getTag().getSf())
+                .build();
+    }
+
+    private static Board toEntityBoard(BoardServiceRequest.Save request, User user) {
+        return Board.builder()
+                .user(user)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .correct(request.getCorrect())
+                .contentImageUrl(request.getContentImageUrl())
+                .viewCount(0)
+                .build();
+    }
+
+    private Board getBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow(
+                () -> new CustomException(Result.NOT_FOUND_BOARD)
+        );
     }
 }

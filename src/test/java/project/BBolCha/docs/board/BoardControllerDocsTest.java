@@ -216,22 +216,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
     @Test
     void readBoardDetail() throws Exception {
         // given
-        Tag tag = Tag.builder()
-                .horror(true)
-                .daily(true)
-                .romance(false)
-                .fantasy(false)
-                .sf(true)
-                .build();
-
-        Hint hint = Hint.builder()
-                .hintOne("1")
-                .hintTwo("2")
-                .hintThree("3")
-                .hintFour("4")
-                .hintFive("5")
-                .build();
-
         given(boardService.findBoard(anyLong()))
                 .willReturn(BoardResponse.Detail.builder()
                         .id(1L)
@@ -244,6 +228,16 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                         .viewCount(0)
                         .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                         .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
+                        .horror(true)
+                        .daily(true)
+                        .romance(false)
+                        .fantasy(false)
+                        .sf(true)
+                        .hintOne("1")
+                        .hintTwo("2")
+                        .hintThree("3")
+                        .hintFour("4")
+                        .hintFive("5")
                         .build()
                 );
 
@@ -283,25 +277,25 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                                         .description("게시글 업데이트 날짜"),
                                 fieldWithPath("data.contentImageUrl").type(JsonFieldType.STRING)
                                         .description("게시글 이미지"),
-                                fieldWithPath("data.tag.horror").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.horror").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 공포"),
-                                fieldWithPath("data.tag.daily").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.daily").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 일상"),
-                                fieldWithPath("data.tag.romance").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.romance").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 로맨스"),
-                                fieldWithPath("data.tag.fantasy").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.fantasy").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 판타지"),
-                                fieldWithPath("data.tag.sf").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.sf").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : SF"),
-                                fieldWithPath("data.hint.hintOne").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintOne").type(JsonFieldType.STRING)
                                         .description("첫번째 힌트"),
-                                fieldWithPath("data.hint.hintTwo").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintTwo").type(JsonFieldType.STRING)
                                         .description("두번째 힌트"),
-                                fieldWithPath("data.hint.hintThree").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintThree").type(JsonFieldType.STRING)
                                         .description("세번째 힌트"),
-                                fieldWithPath("data.hint.hintFour").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintFour").type(JsonFieldType.STRING)
                                         .description("네번째 힌트"),
-                                fieldWithPath("data.hint.hintFive").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintFive").type(JsonFieldType.STRING)
                                         .description("다섯번째 힌트")
                         )
                 ));
@@ -332,22 +326,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                 "테스트 게시글 이미지", tagRequest, hintRequest
         );
 
-        Tag tag = Tag.builder()
-                .horror(true)
-                .daily(true)
-                .romance(false)
-                .fantasy(false)
-                .sf(true)
-                .build();
-
-        Hint hint = Hint.builder()
-                .hintOne("1")
-                .hintTwo("2")
-                .hintThree("3")
-                .hintFour("4")
-                .hintFive("5")
-                .build();
-
         given(boardService.updateBoard(anyLong(), any(BoardServiceRequest.Update.class), any(User.class)))
                 .willReturn(BoardResponse.Detail.builder()
                         .id(1L)
@@ -360,6 +338,16 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                         .viewCount(0)
                         .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                         .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
+                        .horror(true)
+                        .daily(true)
+                        .romance(false)
+                        .fantasy(false)
+                        .sf(true)
+                        .hintOne("1")
+                        .hintTwo("2")
+                        .hintThree("3")
+                        .hintFour("4")
+                        .hintFive("5")
                         .build()
                 );
 
@@ -448,25 +436,25 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                                         .description("게시글 업데이트 날짜"),
                                 fieldWithPath("data.contentImageUrl").type(JsonFieldType.STRING)
                                         .description("게시글 이미지"),
-                                fieldWithPath("data.tag.horror").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.horror").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 공포"),
-                                fieldWithPath("data.tag.daily").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.daily").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 일상"),
-                                fieldWithPath("data.tag.romance").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.romance").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 로맨스"),
-                                fieldWithPath("data.tag.fantasy").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.fantasy").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : 판타지"),
-                                fieldWithPath("data.tag.sf").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.sf").type(JsonFieldType.BOOLEAN)
                                         .description("테마 : SF"),
-                                fieldWithPath("data.hint.hintOne").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintOne").type(JsonFieldType.STRING)
                                         .description("첫번째 힌트"),
-                                fieldWithPath("data.hint.hintTwo").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintTwo").type(JsonFieldType.STRING)
                                         .description("두번째 힌트"),
-                                fieldWithPath("data.hint.hintThree").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintThree").type(JsonFieldType.STRING)
                                         .description("세번째 힌트"),
-                                fieldWithPath("data.hint.hintFour").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintFour").type(JsonFieldType.STRING)
                                         .description("네번째 힌트"),
-                                fieldWithPath("data.hint.hintFive").type(JsonFieldType.STRING)
+                                fieldWithPath("data.hintFive").type(JsonFieldType.STRING)
                                         .description("다섯번째 힌트")
                         )
                 ));
