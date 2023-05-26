@@ -505,22 +505,6 @@ public class BoardControllerDocsTest extends RestDocsSupport {
     @Test
     void listSortedBoardsPerPage() throws Exception {
         // given
-        Tag tag = Tag.builder()
-                .horror(true)
-                .daily(true)
-                .romance(false)
-                .fantasy(false)
-                .sf(true)
-                .build();
-
-        Hint hint = Hint.builder()
-                .hintOne("1")
-                .hintTwo("2")
-                .hintThree("3")
-                .hintFour("4")
-                .hintFive("5")
-                .build();
-
         BoardResponse.Detail boardDetail = BoardResponse.Detail.builder()
                 .id(1L)
                 .authorName("테스트 계정")
@@ -532,6 +516,16 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                 .viewCount(0)
                 .createdAt(LocalDateTime.of(2023, 5, 13, 17, 56))
                 .updatedAt(LocalDateTime.of(2023, 5, 13, 17, 56))
+                .horror(true)
+                .daily(true)
+                .romance(false)
+                .fantasy(false)
+                .sf(true)
+                .hintOne("1")
+                .hintTwo("2")
+                .hintThree("3")
+                .hintFour("4")
+                .hintFive("5")
                 .build();
 
         List<BoardResponse.Detail> boardDetailList = List.of(boardDetail);
@@ -585,25 +579,25 @@ public class BoardControllerDocsTest extends RestDocsSupport {
                                         .description("게시글 생성 날짜"),
                                 fieldWithPath("data.content[].updatedAt").type(JsonFieldType.ARRAY).
                                         description("게시글 수정 날짜"),
-                                fieldWithPath("data.content[].tag.horror").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.content[].horror").type(JsonFieldType.BOOLEAN)
                                         .description("공포 태그 여부"),
-                                fieldWithPath("data.content[].tag.daily").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.content[].daily").type(JsonFieldType.BOOLEAN)
                                         .description("일상 태그 여부"),
-                                fieldWithPath("data.content[].tag.romance").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.content[].romance").type(JsonFieldType.BOOLEAN)
                                         .description("로맨스 태그 여부"),
-                                fieldWithPath("data.content[].tag.fantasy").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.content[].fantasy").type(JsonFieldType.BOOLEAN)
                                         .description("판타지 태그 여부"),
-                                fieldWithPath("data.content[].tag.sf").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.content[].sf").type(JsonFieldType.BOOLEAN)
                                         .description("SF 태그 여부"),
-                                fieldWithPath("data.content[].hint.hintOne").type(JsonFieldType.STRING)
+                                fieldWithPath("data.content[].hintOne").type(JsonFieldType.STRING)
                                         .description("첫번째 힌트"),
-                                fieldWithPath("data.content[].hint.hintTwo").type(JsonFieldType.STRING)
+                                fieldWithPath("data.content[].hintTwo").type(JsonFieldType.STRING)
                                         .description("두번째 힌트"),
-                                fieldWithPath("data.content[].hint.hintThree").type(JsonFieldType.STRING)
+                                fieldWithPath("data.content[].hintThree").type(JsonFieldType.STRING)
                                         .description("세번째 힌트"),
-                                fieldWithPath("data.content[].hint.hintFour").type(JsonFieldType.STRING)
+                                fieldWithPath("data.content[].hintFour").type(JsonFieldType.STRING)
                                         .description("네번째 힌트"),
-                                fieldWithPath("data.content[].hint.hintFive").type(JsonFieldType.STRING)
+                                fieldWithPath("data.content[].hintFive").type(JsonFieldType.STRING)
                                         .description("다섯번째 힌트"),
                                 fieldWithPath("data.pageable.sort.empty").type(JsonFieldType.BOOLEAN)
                                         .description("정렬 정보가 비었는지 여부"),
