@@ -1,4 +1,4 @@
-package project.BBolCha.domain.board.repository;
+package project.BBolCha.domain.board.repository.querydsl;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import project.BBolCha.domain.board.dto.service.response.*;
 import project.BBolCha.domain.board.entity.*;
-import project.BBolCha.domain.user.entity.QUser;
 
 import javax.persistence.EntityManager;
 

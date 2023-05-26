@@ -1,4 +1,4 @@
-package project.BBolCha.domain.board.repository;
+package project.BBolCha.domain.board.repository.querydsl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
