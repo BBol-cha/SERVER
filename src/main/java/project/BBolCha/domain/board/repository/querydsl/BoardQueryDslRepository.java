@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface BoardQueryDslRepository {
     Page<BoardResponse.Detail> getPageBoardsAsDto(Pageable pageable);
-    Optional<Board> getBoardDetail(Long id);
+    Optional<BoardResponse.Detail> getBoardDetail(Long id);
 }

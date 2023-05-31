@@ -78,17 +78,44 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
     }
 
     @Override
-    public Optional<Board> getBoardDetail(Long id) {
-        Board board = queryFactory
-                .select(QBoard.board)
-                .from(QBoard.board)
-                .join(QBoard.board.hint).fetchJoin()
-                .join(QBoard.board.tag).fetchJoin()
-                .join(QBoard.board.user).fetchJoin()
-                .where(QBoard.board.id.eq(id))
+    public Optional<BoardResponse.Detail> getBoardDetail(Long id) {
+        BoardResponse.Detail result = queryFactory
+                .select(Projections.fields(BoardResponse.Detail.class,
+                        board.id.as("id"),
+                        board.user.name.as("authorName"),
+                        board.title.as("title"),
+                        board.content.as("content"),
+                        board.correct.as("correct"),
+                        board.contentImageUrl.as("contentImageUrl"),
+
+                        ExpressionUtils.as(JPAExpressions
+                                .select(like.count())
+                                .from(like)
+                                .where(like.board.eq(board)), "likeCount"),
+                        board.viewCount.as("viewCount"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+
+                        board.tag.horror,
+                        board.tag.daily,
+                        board.tag.romance,
+                        board.tag.fantasy,
+                        board.tag.sf,
+
+                        board.hint.hintOne,
+                        board.hint.hintTwo,
+                        board.hint.hintThree,
+                        board.hint.hintFour,
+                        board.hint.hintFive
+                ))
+                .from(board)
+                .join(board.hint).fetchJoin()
+                .join(board.tag).fetchJoin()
+                .join(board.user).fetchJoin()
+                .where(board.id.eq(id))
                 .fetchOne();
 
-        return Optional.ofNullable(board);
+        return Optional.ofNullable(result);
     }
 
     private static JPQLQuery<Long> getLikeCountQuery(QLike likes) {

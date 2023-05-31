@@ -50,6 +50,9 @@ public class BoardService {
                 .orElseThrow(
                         () -> new CustomException(Result.NOT_FOUND_BOARD)
                 );
+        /**
+         * DTO 바로 접근 및 Like Count 테스트 필요
+         */
 
         Long likes = likeRepository.countByBoard(board);
         return BoardResponse.Detail.response(board, likes);
