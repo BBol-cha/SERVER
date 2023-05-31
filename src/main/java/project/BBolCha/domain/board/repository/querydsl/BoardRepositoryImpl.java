@@ -11,10 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import project.BBolCha.domain.board.dto.service.response.*;
 import project.BBolCha.domain.board.entity.*;
+import project.BBolCha.global.exception.CustomException;
+import project.BBolCha.global.model.Result;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import static project.BBolCha.domain.board.entity.QBoard.*;
 import static project.BBolCha.domain.board.entity.QHint.*;
@@ -72,6 +75,20 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                 .from(board);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Optional<Board> getBoardDetail(Long id) {
+        Board board = queryFactory
+                .select(QBoard.board)
+                .from(QBoard.board)
+                .join(QBoard.board.hint).fetchJoin()
+                .join(QBoard.board.tag).fetchJoin()
+                .join(QBoard.board.user).fetchJoin()
+                .where(QBoard.board.id.eq(id))
+                .fetchOne();
+
+        return Optional.ofNullable(board);
     }
 
     private static JPQLQuery<Long> getLikeCountQuery(QLike likes) {

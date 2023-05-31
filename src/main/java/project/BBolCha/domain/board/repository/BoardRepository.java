@@ -10,14 +10,4 @@ import project.BBolCha.domain.board.repository.querydsl.BoardQueryDslRepository;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardQueryDslRepository {
-
-    @Query(
-            "select b " +
-            "from Board b " +
-                    "join fetch b.user " +
-                    "join fetch b.tag " +
-                    "join fetch b.hint " +
-                    "where b.id = :id"
-    )
-    Optional<Board> fetchFindById(@Param(value = "id") Long id);
 }

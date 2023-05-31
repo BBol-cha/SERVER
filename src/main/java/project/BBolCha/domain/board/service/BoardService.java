@@ -46,8 +46,7 @@ public class BoardService {
     }
 
     public BoardResponse.Detail findBoard(Long id) {
-
-        Board board = boardRepository.fetchFindById(id)
+        Board board = boardRepository.getBoardDetail(id)
                 .orElseThrow(
                         () -> new CustomException(Result.NOT_FOUND_BOARD)
                 );

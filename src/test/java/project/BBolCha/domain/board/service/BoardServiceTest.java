@@ -29,7 +29,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static project.BBolCha.global.model.Result.NOT_MY_POST;
+import static project.BBolCha.global.model.Result.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -115,6 +115,21 @@ class BoardServiceTest {
                 .contains("1", "2", "3", "4", "5");
 
         assertThat(response.getLikeCount()).isZero();
+    }
+
+    @DisplayName("게시글의 상세 내용을 조회한다")
+    @Test
+    void readBoardDetail2() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board board = saveAndRetrieveBoard(user);
+
+        em.flush();
+        em.clear();
+        // when
+        assertThatThrownBy(() -> boardService.findBoard(2L))
+                .isInstanceOf(CustomException.class)
+                .extracting("result").isEqualTo(NOT_FOUND_BOARD);
     }
 
     @DisplayName("유저가 자신이 작성한 게시글을 제목, 내용, 정답, 이미지, 태그, 힌트를 수정한다.")

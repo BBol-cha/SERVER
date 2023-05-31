@@ -105,7 +105,7 @@ class BoardRepositoryTest {
 
         System.out.println("===============================");
         // when
-        Board board = boardRepository.fetchFindById(savedBoard.getId())
+        Board board = boardRepository.getBoardDetail(savedBoard.getId())
                 .orElseThrow(
                         () -> new CustomException(Result.NOT_FOUND_BOARD)
                 );
