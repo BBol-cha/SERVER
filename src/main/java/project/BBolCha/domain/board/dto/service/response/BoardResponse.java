@@ -1,6 +1,5 @@
 package project.BBolCha.domain.board.dto.service.response;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import project.BBolCha.domain.board.entity.Board;
 import project.BBolCha.domain.board.entity.Like;
@@ -93,7 +92,7 @@ public class BoardResponse {
         private String hintFour;
         private String hintFive;
 
-        public static BoardResponse.Detail response(Board board) {
+        public static BoardResponse.Detail response(Board board, Long likes) {
             return BoardResponse.Detail.builder()
                     .id(board.getId())
                     .authorName(board.getUser().getName())
@@ -101,7 +100,7 @@ public class BoardResponse {
                     .content(board.getContent())
                     .correct(board.getCorrect())
                     .contentImageUrl(board.getContentImageUrl())
-                    .likeCount((long) board.getLike().size())
+                    .likeCount(likes)
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())

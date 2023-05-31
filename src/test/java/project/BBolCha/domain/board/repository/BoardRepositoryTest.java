@@ -17,10 +17,8 @@ import project.BBolCha.domain.user.repository.UserRepository;
 import project.BBolCha.global.exception.CustomException;
 import project.BBolCha.global.model.Result;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class BoardRepositoryTest {
 
+    @Autowired
+    private EntityManager em;
+
+    @Autowired
+    private LikeRepository likeRepository;
     @Autowired
     private BoardRepository boardRepository;
     @Autowired
@@ -42,6 +45,10 @@ class BoardRepositoryTest {
         User user = saveAndRetrieveUser();
         Board savedBoard = saveAndRetrieveBoard(user);
 
+        em.flush();
+        em.clear();
+
+        System.out.println("===============================");
         // when
         Board board = boardRepository.findById(savedBoard.getId())
                 .orElseThrow(
@@ -64,17 +71,67 @@ class BoardRepositoryTest {
         assertThat(board.getLike().size()).isZero();
     }
 
+    @DisplayName("게시글의 ID를 통해 단건을 fetch join을 통해 조회한다.")
+    @Test
+    void findByIdFetch() {
+        // given
+        User user = saveAndRetrieveUser();
+        Board savedBoard = saveAndRetrieveBoard(user);
+
+        Like like1 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like2 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like3 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like4 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        likeRepository.saveAll(List.of(like1, like2, like3, like4));
+
+        em.flush();
+        em.clear();
+
+        System.out.println("===============================");
+        // when
+        Board board = boardRepository.fetchFindById(savedBoard.getId())
+                .orElseThrow(
+                        () -> new CustomException(Result.NOT_FOUND_BOARD)
+                );
+
+        // then
+        assertThat(board)
+                .extracting("user.name", "title", "content", "correct", "contentImageUrl", "viewCount")
+                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 5);
+
+        assertThat(board.getTag())
+                .extracting("horror", "daily", "romance", "fantasy", "sf")
+                .contains(true, true, false, false, true);
+
+        assertThat(board.getHint())
+                .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
+                .contains("1", "2", "3", "4", "5");
+    }
+
     // method
     private Board saveAndRetrieveBoard(User user) {
-        List<Like> likes = new ArrayList<>();
-
         Board board = Board.builder()
                 .user(user)
                 .title("test")
                 .content("testContent")
                 .correct("testCorrect")
                 .contentImageUrl("test.png")
-                .like(likes)
                 .viewCount(5)
                 .build();
 

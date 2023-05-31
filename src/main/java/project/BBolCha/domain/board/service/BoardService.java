@@ -46,8 +46,14 @@ public class BoardService {
     }
 
     public BoardResponse.Detail findBoard(Long id) {
-        Board board = getBoard(id);
-        return BoardResponse.Detail.response(board);
+
+        Board board = boardRepository.fetchFindById(id)
+                .orElseThrow(
+                        () -> new CustomException(Result.NOT_FOUND_BOARD)
+                );
+
+        Long likes = likeRepository.countByBoard(board);
+        return BoardResponse.Detail.response(board, likes);
     }
 
     @Transactional
@@ -63,7 +69,8 @@ public class BoardService {
                 request.getContentImageUrl(), request.getTag(), request.getHint()
         );
 
-        return BoardResponse.Detail.response(board);
+        Long likes = likeRepository.countByBoard(board);
+        return BoardResponse.Detail.response(board, likes);
     }
 
     @Transactional

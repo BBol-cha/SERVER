@@ -25,6 +25,7 @@ import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
 import project.BBolCha.global.exception.CustomException;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -34,6 +35,9 @@ import static project.BBolCha.global.model.Result.NOT_MY_POST;
 @ActiveProfiles("test")
 @Transactional
 class BoardServiceTest {
+
+    @Autowired
+    private EntityManager em;
 
     @Autowired
     private BoardService boardService;
@@ -92,6 +96,8 @@ class BoardServiceTest {
         User user = saveAndRetrieveUser();
         Board board = saveAndRetrieveBoard(user);
 
+        em.flush();
+        em.clear();
         // when
         BoardResponse.Detail response = boardService.findBoard(board.getId());
 
@@ -107,6 +113,8 @@ class BoardServiceTest {
         assertThat(response)
                 .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
                 .contains("1", "2", "3", "4", "5");
+
+        assertThat(response.getLikeCount()).isZero();
     }
 
     @DisplayName("유저가 자신이 작성한 게시글을 제목, 내용, 정답, 이미지, 태그, 힌트를 수정한다.")
@@ -313,15 +321,12 @@ class BoardServiceTest {
     }
 
     private Board saveAndRetrieveBoard(User user) {
-        List<Like> likes = new ArrayList<>();
-
         Board board = Board.builder()
                 .user(user)
                 .title("test")
                 .content("testContent")
                 .correct("testCorrect")
                 .contentImageUrl("test.png")
-                .like(likes)
                 .viewCount(5)
                 .build();
 

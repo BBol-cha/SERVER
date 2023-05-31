@@ -13,4 +13,7 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     @Transactional
     Optional<Like> findByBoardAndUser(Board board, User user);
+
+    @Transactional
+    Long countByBoard(Board board);
 }

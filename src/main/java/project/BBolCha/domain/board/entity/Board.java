@@ -15,10 +15,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @DynamicUpdate
+@Builder
 @Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE board SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 public class Board extends BaseEntity implements Serializable {
@@ -47,30 +49,16 @@ public class Board extends BaseEntity implements Serializable {
     private Integer viewCount;
 
     @OneToMany(mappedBy = "board")
+    @Builder.Default
     private List<Like> like = new ArrayList<>();
 
-    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Tag tag;
 
-    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Hint hint;
 
     private LocalDateTime deletedAt;
-
-    @Builder
-    private Board(Long id, User user, String title, String content, String correct, String contentImageUrl, Integer viewCount, List<Like> like, Tag tag, Hint hint, LocalDateTime deletedAt) {
-        this.id = id;
-        this.user = user;
-        this.title = title;
-        this.content = content;
-        this.correct = correct;
-        this.contentImageUrl = contentImageUrl;
-        this.viewCount = viewCount;
-        this.like = like;
-        this.tag = tag;
-        this.hint = hint;
-        this.deletedAt = deletedAt;
-    }
 
     public void updateBoard(
             String title, String content, String correct,

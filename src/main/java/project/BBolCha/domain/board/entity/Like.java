@@ -30,4 +30,10 @@ public class Like {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @Override
+    public String toString() {
+        return "Like{" +
+                "id=" + id +
+                '}';
+    }
 }
