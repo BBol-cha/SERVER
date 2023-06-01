@@ -35,7 +35,6 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
 
     @Override
     public Page<BoardResponse.Detail> getPageBoardsAsDto(Pageable pageable, String arrange, String filter) {
-        QLike likes = new QLike("likes");
         List<BoardResponse.Detail> content = queryFactory
                 .select(Projections.fields(BoardResponse.Detail.class,
                         board.id.as("id"),
@@ -44,7 +43,7 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                         board.content.as("content"),
                         board.correct.as("correct"),
                         board.contentImageUrl.as("contentImageUrl"),
-                        ExpressionUtils.as(getLikeCountQuery(likes), "likeCount"),
+                        ExpressionUtils.as(getLikeCountQuery(), "likeCount"),
                         board.viewCount.as("viewCount"),
                         board.createdAt.as("createdAt"),
                         board.updatedAt.as("updatedAt"),
@@ -65,7 +64,6 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                 .innerJoin(board.user, user)
                 .innerJoin(board.tag, tag)
                 .innerJoin(board.hint, hint)
-                .innerJoin(board.like, like)
                 .orderBy(
                         generateSortQuery(arrange, filter)
                 )
@@ -109,7 +107,8 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
         return Optional.ofNullable(result);
     }
 
-    private static JPQLQuery<Long> getLikeCountQuery(QLike likes) {
+    private static JPQLQuery<Long> getLikeCountQuery() {
+        QLike likes = new QLike("likes");
         return JPAExpressions
                 .select(likes.count())
                 .from(likes)
