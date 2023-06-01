@@ -38,7 +38,7 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
         List<BoardResponse.Detail> content = queryFactory
                 .select(Projections.fields(BoardResponse.Detail.class,
                         board.id.as("id"),
-                        user.name.as("authorName"),
+                        board.user.name.as("authorName"),
                         board.title.as("title"),
                         board.content.as("content"),
                         board.correct.as("correct"),
@@ -48,25 +48,22 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                         board.createdAt.as("createdAt"),
                         board.updatedAt.as("updatedAt"),
 
-                        tag.horror,
-                        tag.daily,
-                        tag.romance,
-                        tag.fantasy,
-                        tag.sf,
+                        board.tag.horror,
+                        board.tag.daily,
+                        board.tag.romance,
+                        board.tag.fantasy,
+                        board.tag.sf,
 
-                        hint.hintOne,
-                        hint.hintTwo,
-                        hint.hintThree,
-                        hint.hintFour,
-                        hint.hintFive
-                ))
+                        board.hint.hintOne,
+                        board.hint.hintTwo,
+                        board.hint.hintThree,
+                        board.hint.hintFour,
+                        board.hint.hintFive))
                 .from(board)
                 .innerJoin(board.user, user)
                 .innerJoin(board.tag, tag)
                 .innerJoin(board.hint, hint)
-                .orderBy(
-                        generateSortQuery(arrange, filter)
-                )
+                .orderBy(generateSortQuery(arrange, filter))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -95,8 +92,7 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
                         ExpressionUtils.as(JPAExpressions
                                 .select(like.count())
                                 .from(like)
-                                .where(like.board.eq(board)), "likeCount")
-                ))
+                                .where(like.board.eq(board)), "likeCount")))
                 .from(board)
                 .join(board.hint).fetchJoin()
                 .join(board.tag).fetchJoin()

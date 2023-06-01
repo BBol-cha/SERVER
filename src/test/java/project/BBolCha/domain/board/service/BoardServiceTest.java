@@ -223,7 +223,7 @@ class BoardServiceTest {
         em.clear();
         // when
         long startTime = System.currentTimeMillis();
-        Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(1, 10, "createdAt", "ASC");
+        Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(1, 10, "createAt", "ASC");
         long stopTime = System.currentTimeMillis();
 
         // then
