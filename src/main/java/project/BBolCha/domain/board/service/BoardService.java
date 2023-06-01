@@ -46,7 +46,7 @@ public class BoardService {
     }
 
     public BoardResponse.Detail findBoard(Long id) {
-        Board board = boardRepository.getBoardDetail(id)
+        BoardResponse.DetailDsl detail = boardRepository.getBoardDetail(id)
                 .orElseThrow(
                         () -> new CustomException(Result.NOT_FOUND_BOARD)
                 );
@@ -54,8 +54,7 @@ public class BoardService {
          * DTO 바로 접근 및 Like Count 테스트 필요
          */
 
-        Long likes = likeRepository.countByBoard(board);
-        return BoardResponse.Detail.response(board, likes);
+        return detail.response();
     }
 
     @Transactional

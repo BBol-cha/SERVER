@@ -78,35 +78,14 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
     }
 
     @Override
-    public Optional<BoardResponse.Detail> getBoardDetail(Long id) {
-        BoardResponse.Detail result = queryFactory
-                .select(Projections.fields(BoardResponse.Detail.class,
-                        board.id.as("id"),
-                        board.user.name.as("authorName"),
-                        board.title.as("title"),
-                        board.content.as("content"),
-                        board.correct.as("correct"),
-                        board.contentImageUrl.as("contentImageUrl"),
-
+    public Optional<BoardResponse.DetailDsl> getBoardDetail(Long id) {
+        BoardResponse.DetailDsl result = queryFactory
+                .select(Projections.fields(BoardResponse.DetailDsl.class,
+                        board,
                         ExpressionUtils.as(JPAExpressions
                                 .select(like.count())
                                 .from(like)
-                                .where(like.board.eq(board)), "likeCount"),
-                        board.viewCount.as("viewCount"),
-                        board.createdAt.as("createdAt"),
-                        board.updatedAt.as("updatedAt"),
-
-                        board.tag.horror,
-                        board.tag.daily,
-                        board.tag.romance,
-                        board.tag.fantasy,
-                        board.tag.sf,
-
-                        board.hint.hintOne,
-                        board.hint.hintTwo,
-                        board.hint.hintThree,
-                        board.hint.hintFour,
-                        board.hint.hintFive
+                                .where(like.board.eq(board)), "likeCount")
                 ))
                 .from(board)
                 .join(board.hint).fetchJoin()

@@ -105,21 +105,22 @@ class BoardRepositoryTest {
 
         System.out.println("===============================");
         // when
-        Board board = boardRepository.getBoardDetail(savedBoard.getId())
+        BoardResponse.Detail board = boardRepository.getBoardDetail(savedBoard.getId())
                 .orElseThrow(
-                        () -> new CustomException(Result.NOT_FOUND_BOARD)
-                );
+                        () -> new CustomException(Result.NOT_FOUND_BOARD))
+                .response();
+
 
         // then
         assertThat(board)
-                .extracting("user.name", "title", "content", "correct", "contentImageUrl", "viewCount")
+                .extracting("authorName", "title", "content", "correct", "contentImageUrl", "viewCount")
                 .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 5);
-
-        assertThat(board.getTag())
+ 
+        assertThat(board)
                 .extracting("horror", "daily", "romance", "fantasy", "sf")
                 .contains(true, true, false, false, true);
 
-        assertThat(board.getHint())
+        assertThat(board)
                 .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
                 .contains("1", "2", "3", "4", "5");
     }
