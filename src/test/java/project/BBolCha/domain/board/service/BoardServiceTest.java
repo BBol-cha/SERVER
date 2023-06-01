@@ -94,16 +94,20 @@ class BoardServiceTest {
         // given
         User user = saveAndRetrieveUser();
         Board board = saveAndRetrieveBoard(user);
+        saveLike(board, user);
 
         em.flush();
         em.clear();
         // when
+        long startTime = System.currentTimeMillis();
         BoardResponse.Detail response = boardService.findBoard(board.getId());
+        long endTime = System.currentTimeMillis();
 
         // then
+        System.out.println(endTime - startTime);
         assertThat(response)
                 .extracting("authorName", "title", "content", "correct", "contentImageUrl", "likeCount", "viewCount")
-                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 0L, 5);
+                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 4L, 5);
 
         assertThat(response)
                 .extracting("horror", "daily", "romance", "fantasy", "sf")
@@ -113,7 +117,7 @@ class BoardServiceTest {
                 .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
                 .contains("1", "2", "3", "4", "5");
 
-        assertThat(response.getLikeCount()).isZero();
+        assertThat(response.getLikeCount()).isEqualTo(4);
     }
 
     @DisplayName("게시글의 상세 내용을 조회할때 해당 게시글이 존재하지 않으면 CustomException 이 발생한다.")

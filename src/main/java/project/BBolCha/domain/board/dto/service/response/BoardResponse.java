@@ -120,38 +120,6 @@ public class BoardResponse {
 
     @NoArgsConstructor
     @Getter
-    public static class DetailDsl {
-        private Board board;
-        private Long likeCount;
-
-        public BoardResponse.Detail response() {
-            return BoardResponse.Detail.builder()
-                    .id(board.getId())
-                    .authorName(board.getUser().getName())
-                    .title(board.getTitle())
-                    .content(board.getContent())
-                    .correct(board.getCorrect())
-                    .contentImageUrl(board.getContentImageUrl())
-                    .likeCount(likeCount)
-                    .viewCount(board.getViewCount())
-                    .createdAt(board.getCreatedAt())
-                    .updatedAt(board.getUpdatedAt())
-                    .horror(board.getTag().getHorror())
-                    .daily(board.getTag().getDaily())
-                    .romance(board.getTag().getRomance())
-                    .fantasy(board.getTag().getFantasy())
-                    .sf(board.getTag().getSf())
-                    .hintOne(board.getHint().getHintOne())
-                    .hintTwo(board.getHint().getHintTwo())
-                    .hintThree(board.getHint().getHintThree())
-                    .hintFour(board.getHint().getHintFour())
-                    .hintFive(board.getHint().getHintFive())
-                    .build();
-        }
-    }
-
-    @NoArgsConstructor
-    @Getter
     public static class Likes {
         private Long id;
         private Boolean isLiked;

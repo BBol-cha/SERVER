@@ -45,20 +45,47 @@ class BoardRepositoryTest {
         User user = saveAndRetrieveUser();
         Board savedBoard = saveAndRetrieveBoard(user);
 
+        Like like1 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like2 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like3 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        Like like4 = Like.builder()
+                .board(savedBoard)
+                .user(user)
+                .build();
+
+        likeRepository.saveAll(List.of(like1, like2, like3, like4));
+
         em.flush();
         em.clear();
 
         System.out.println("===============================");
         // when
+
+        long startTime = System.currentTimeMillis();
         Board board = boardRepository.findById(savedBoard.getId())
                 .orElseThrow(
                         () -> new CustomException(Result.NOT_FOUND_BOARD)
                 );
+        BoardResponse.Detail response = BoardResponse.Detail.response(board);
+        long endTime = System.currentTimeMillis();
 
         // then
+        System.out.println(endTime - startTime);
         assertThat(board)
-                .extracting("title", "content", "correct", "contentImageUrl", "viewCount")
-                .contains("test", "testContent", "testCorrect", "test.png", 5);
+                .extracting("user.name", "title", "content", "correct", "contentImageUrl", "viewCount")
+                .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 5);
 
         assertThat(board.getTag())
                 .extracting("horror", "daily", "romance", "fantasy", "sf")
@@ -67,13 +94,14 @@ class BoardRepositoryTest {
         assertThat(board.getHint())
                 .extracting("hintOne", "hintTwo", "hintThree", "hintFour", "hintFive")
                 .contains("1", "2", "3", "4", "5");
-
-        assertThat(board.getLike().size()).isZero();
     }
 
     @DisplayName("게시글의 ID를 통해 단건을 fetch join을 통해 조회한다.")
     @Test
     void findByIdFetch() {
+        /*
+         * 무엇이 더 효율적일지 고민해봐야할듯 쿼리 개수 vs 성능
+         */
         // given
         User user = saveAndRetrieveUser();
         Board savedBoard = saveAndRetrieveBoard(user);
@@ -105,17 +133,17 @@ class BoardRepositoryTest {
 
         System.out.println("===============================");
         // when
+        long startTime = System.currentTimeMillis();
         BoardResponse.Detail board = boardRepository.getBoardDetail(savedBoard.getId())
                 .orElseThrow(
-                        () -> new CustomException(Result.NOT_FOUND_BOARD))
-                .response();
-
-
+                        () -> new CustomException(Result.NOT_FOUND_BOARD));
+        long endTime = System.currentTimeMillis();
         // then
+        System.out.println(endTime - startTime);
         assertThat(board)
                 .extracting("authorName", "title", "content", "correct", "contentImageUrl", "viewCount")
                 .contains("테스트 계정", "test", "testContent", "testCorrect", "test.png", 5);
- 
+
         assertThat(board)
                 .extracting("horror", "daily", "romance", "fantasy", "sf")
                 .contains(true, true, false, false, true);

@@ -85,18 +85,35 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
 
 
     @Override
-    public Optional<BoardResponse.DetailDsl> getBoardDetail(Long id) {
-        BoardResponse.DetailDsl result = queryFactory
-                .select(Projections.fields(BoardResponse.DetailDsl.class,
-                        board,
-                        ExpressionUtils.as(JPAExpressions
-                                .select(like.count())
-                                .from(like)
-                                .where(like.board.eq(board)), "likeCount")))
+    public Optional<BoardResponse.Detail> getBoardDetail(Long id) {
+        BoardResponse.Detail result = queryFactory
+                .select(Projections.fields(BoardResponse.Detail.class,
+                        board.id.as("id"),
+                        board.user.name.as("authorName"),
+                        board.title.as("title"),
+                        board.content.as("content"),
+                        board.correct.as("correct"),
+                        board.contentImageUrl.as("contentImageUrl"),
+                        ExpressionUtils.as(getLikeCountQuery(), "likeCount"),
+                        board.viewCount.as("viewCount"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+
+                        board.tag.horror,
+                        board.tag.daily,
+                        board.tag.romance,
+                        board.tag.fantasy,
+                        board.tag.sf,
+
+                        board.hint.hintOne,
+                        board.hint.hintTwo,
+                        board.hint.hintThree,
+                        board.hint.hintFour,
+                        board.hint.hintFive))
                 .from(board)
-                .join(board.hint).fetchJoin()
-                .join(board.tag).fetchJoin()
-                .join(board.user).fetchJoin()
+                .innerJoin(board.user)
+                .innerJoin(board.tag)
+                .innerJoin(board.hint)
                 .where(board.id.eq(id))
                 .fetchOne();
 
@@ -108,6 +125,6 @@ public class BoardRepositoryImpl implements BoardQueryDslRepository {
         return JPAExpressions
                 .select(likes.count())
                 .from(likes)
-                .where(likes.board.id.eq(board.id));
+                .where(likes.board.eq(board));
     }
 }
