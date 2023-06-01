@@ -92,7 +92,7 @@ public class BoardResponse {
         private String hintFour;
         private String hintFive;
 
-        public static BoardResponse.Detail response(Board board, Long likes) {
+        public static BoardResponse.Detail response(Board board) {
             return BoardResponse.Detail.builder()
                     .id(board.getId())
                     .authorName(board.getUser().getName())
@@ -100,7 +100,7 @@ public class BoardResponse {
                     .content(board.getContent())
                     .correct(board.getCorrect())
                     .contentImageUrl(board.getContentImageUrl())
-                    .likeCount(likes)
+                    .likeCount((long) board.getLike().size())
                     .viewCount(board.getViewCount())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())

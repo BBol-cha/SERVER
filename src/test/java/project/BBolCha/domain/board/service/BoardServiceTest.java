@@ -1,7 +1,6 @@
 package project.BBolCha.domain.board.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +116,7 @@ class BoardServiceTest {
         assertThat(response.getLikeCount()).isZero();
     }
 
-    @DisplayName("게시글의 상세 내용을 조회한다")
+    @DisplayName("게시글의 상세 내용을 조회할때 해당 게시글이 존재하지 않으면 CustomException 이 발생한다.")
     @Test
     void readBoardDetail2() {
         // given
@@ -199,31 +198,54 @@ class BoardServiceTest {
 
     @DisplayName("게시글이 작성된 날짜 순으로 오름차순으로 정렬하여서 첫번째 페이지의 10개 항목을 가져온다.")
     @Test
-    void shouldReturnFirstPageWithTenItemsOrderedByCreatedDate() throws JsonProcessingException {
+    void shouldReturnFirstPageWithTenItemsOrderedByCreatedDate() {
         // given
-        User user = saveAndRetrieveUser();
+        User user1 = saveAndRetrieveUser();
+        User user2 = saveAndRetrieveUser();
+        User user3 = saveAndRetrieveUser();
 
-        saveAndRetrieveBoard(user, "1_content");
-        saveAndRetrieveBoard(user, "2_content");
-        saveAndRetrieveBoard(user, "3_content");
-        saveAndRetrieveBoard(user, "4_content");
+        for (int i = 0; i < 1000; i++) {
+            Board board = saveAndRetrieveBoard(user1);
+            saveLike(board, user1);
+        }
 
+        for (int i = 0; i < 1000; i++) {
+            Board board = saveAndRetrieveBoard(user2);
+            saveLike(board, user2);
+        }
+
+        for (int i = 0; i < 1000; i++) {
+            Board board = saveAndRetrieveBoard(user3);
+            saveLike(board, user3);
+        }
+
+        em.flush();
+        em.clear();
         // when
+        long startTime = System.currentTimeMillis();
         Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(1, 10, "createdAt", "ASC");
+        long stopTime = System.currentTimeMillis();
 
         // then
+        System.out.println(stopTime - startTime);
         assertThat(response)
-                .hasSize(4)
+                .hasSize(10)
                 .extracting("title", "content", "authorName")
                 .containsExactlyInAnyOrder(
-                        tuple("test", "1_content", "테스트 계정"),
-                        tuple("test", "2_content", "테스트 계정"),
-                        tuple("test", "3_content", "테스트 계정"),
-                        tuple("test", "4_content", "테스트 계정")
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정"),
+                        tuple("test", "testContent", "테스트 계정")
                 );
 
-        assertThat(response.getTotalPages()).isEqualTo(1);
-        assertThat(response.getTotalElements()).isEqualTo(4L);
+        assertThat(response.getTotalPages()).isEqualTo(300);
+        assertThat(response.getTotalElements()).isEqualTo(3000L);
     }
 
     @DisplayName("게시글이 작성된 날짜 순으로 내림차순으로 정렬하여서 두번째 페이지의 5개 항목을 가져온다.")
@@ -299,7 +321,7 @@ class BoardServiceTest {
     }
 
     // method
-    private void saveAndRetrieveBoard(User user, String content) {
+    private Board saveAndRetrieveBoard(User user, String content) {
         List<Like> likes = new ArrayList<>();
 
         Board board = Board.builder()
@@ -332,7 +354,7 @@ class BoardServiceTest {
 
 
         board.saveTagAndHint(tag, hint);
-        boardRepository.save(board);
+        return boardRepository.save(board);
     }
 
     private Board saveAndRetrieveBoard(User user) {
@@ -367,6 +389,30 @@ class BoardServiceTest {
         board.saveTagAndHint(tag, hint);
 
         return boardRepository.save(board);
+    }
+
+    private void saveLike(Board board, User user) {
+        Like like1 = Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+
+        Like like2 = Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+
+        Like like3 = Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+
+        Like like4 = Like.builder()
+                .board(board)
+                .user(user)
+                .build();
+
+        likeRepository.saveAll(List.of(like1, like2, like3, like4));
     }
 
     private User saveAndRetrieveUser() {
