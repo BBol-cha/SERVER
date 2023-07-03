@@ -101,12 +101,36 @@ class UserControllerTest extends ControllerTestSupport {
     @Test
     void updateUserNameAndProfileImageUrl() throws Exception {
         // given
-        UserRequest.Update request = new UserRequest.Update("test","test");
+        UserRequest.Update request = new UserRequest.Update("test", "test");
         // when // then
         mockMvc.perform(
                         MockMvcRequestBuilders.patch("/auth")
                                 .content(objectMapper.writeValueAsString(request.toServiceRequest()))
                                 .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("유저 프로필 이미지 확인 API")
+    @Test
+    void checkMyProfileImageUrl() throws Exception {
+        // given
+        User user = User.builder().build();
+
+        given(userService.read(user))
+                .willReturn(UserResponse.Detail.builder()
+                        .id(1L)
+                        .email("kevin@gmail.com")
+                        .name("kevin")
+                        .profileImageUrl("test.png")
+                        .build()
+                );
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth/check/image")
+                                .header("Authorization", "testToken")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -153,4 +153,8 @@ public class UserService {
 
         return null;
     }
+
+    public UserResponse.CheckProfile checkMyProfileImage(User user) {
+        return UserResponse.CheckProfile.response(user);
+    }
 }

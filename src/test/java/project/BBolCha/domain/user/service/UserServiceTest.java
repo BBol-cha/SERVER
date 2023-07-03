@@ -227,6 +227,22 @@ class UserServiceTest {
                 .contains("테스트 업데이트 계정", "update_test_image.png", "test@test.com");
     }
 
+    @DisplayName("유저가 자신의 프로필 이미지를 확인한다.")
+    @Test
+    void checkMyProfileImage() {
+        // given
+        User user = saveAndRetrieveUser();
+
+        // when
+        UserResponse.CheckProfile response = userService.checkMyProfileImage(user);
+
+        // then
+        assertThat(response)
+                .extracting("name", "profileImageUrl")
+                .contains("테스트 계정", "test.png");
+    }
+
+    // method
     private User saveAndRetrieveUser() {
         User user = User.builder()
                 .name("테스트 계정")

@@ -69,3 +69,13 @@ include::{snippets}/user-update/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/user-update/http-response.adoc[]
 include::{snippets}/user-update/response-fields.adoc[]
+
+[[user-checkMyProfileImage]]
+=== 유저 프로필 이미지 확인 API
+
+==== HTTP Request Header
+include::{snippets}/user-checkProfileImage/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-checkProfileImage/http-response.adoc[]
+include::{snippets}/user-checkProfileImage/response-fields.adoc[]

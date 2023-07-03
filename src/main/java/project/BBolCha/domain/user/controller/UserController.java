@@ -73,4 +73,13 @@ public class UserController {
     ) {
         return CustomResponseEntity.success(userService.update(request.toServiceRequest(), user));
     }
+
+    // 내 프로필 이미지 확인하기
+    @GetMapping("auth/check/image")
+    public CustomResponseEntity<UserResponse.CheckProfile> checkMyProfileImageUrl (
+            @AuthenticationPrincipal User user
+    ) {
+        return CustomResponseEntity.success(userService.checkMyProfileImage(user));
+    }
+
 }

@@ -239,15 +239,15 @@ public class UserControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("data is empty object")
                         )
-                        ));
+                ));
     }
 
     @DisplayName("회원정보 수정 API")
     @Test
     void updateUserNameAndProfileImageUrl() throws Exception {
         // given
-        UserRequest.Update request = new UserRequest.Update("test","test");
-        given(userService.update(any(UserServiceRequest.Update.class),any(User.class)))
+        UserRequest.Update request = new UserRequest.Update("test", "test");
+        given(userService.update(any(UserServiceRequest.Update.class), any(User.class)))
                 .willReturn(UserResponse.Detail.builder()
                         .id(1L)
                         .email("test@test.com")
@@ -258,7 +258,7 @@ public class UserControllerDocsTest extends RestDocsSupport {
         // when // then
         mockMvc.perform(
                         MockMvcRequestBuilders.patch("/auth")
-                                .header("Authorization","JWT_AccessToken")
+                                .header("Authorization", "JWT_AccessToken")
                                 .content(objectMapper.writeValueAsString(request.toServiceRequest()))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -293,5 +293,42 @@ public class UserControllerDocsTest extends RestDocsSupport {
                         )
                 ));
 
+    }
+
+    @DisplayName("회원 프로필 이미지 확인 API")
+    @Test
+    void checkProfileImageUrl() throws Exception {
+        // given
+        given(userService.checkMyProfileImage(any(User.class)))
+                .willReturn(
+                        UserResponse.CheckProfile.builder()
+                                .profileImageUrl("test.png")
+                                .name("테스트 계정")
+                                .build()
+                );
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/auth/check/image")
+                                .header("Authorization", "JWT_AccessToken")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-checkProfileImage",
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Authorization").description("JWT_AccessToken")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("상태 메세지"),
+                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                        .description("유저 이름"),
+                                fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING)
+                                        .description("유저 프로필 사진")
+                        )
+                ));
     }
 }

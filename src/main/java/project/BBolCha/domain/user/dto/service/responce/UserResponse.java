@@ -70,4 +70,24 @@ public class UserResponse {
                     .build();
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class CheckProfile {
+        private String name;
+        private String profileImageUrl;
+
+        @Builder
+        private CheckProfile(String profileImageUrl, String name) {
+            this.name = name;
+            this.profileImageUrl = profileImageUrl;
+        }
+
+        public static UserResponse.CheckProfile response(User user) {
+            return CheckProfile.builder()
+                    .profileImageUrl(user.getProfileImageUrl())
+                    .name(user.getName())
+                    .build();
+        }
+    }
 }

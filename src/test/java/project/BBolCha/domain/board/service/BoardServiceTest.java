@@ -22,6 +22,7 @@ import project.BBolCha.domain.board.repository.LikeRepository;
 import project.BBolCha.domain.user.entity.Authority;
 import project.BBolCha.domain.user.entity.User;
 import project.BBolCha.domain.user.repository.UserRepository;
+import project.BBolCha.domain.user.service.UserService;
 import project.BBolCha.global.exception.CustomException;
 
 import javax.persistence.EntityManager;
