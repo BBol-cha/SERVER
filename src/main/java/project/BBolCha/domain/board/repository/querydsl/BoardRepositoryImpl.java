@@ -11,17 +11,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import project.BBolCha.domain.board.dto.service.response.*;
-import project.BBolCha.domain.board.entity.*;
+import project.BBolCha.domain.board.entity.QBoard;
+import project.BBolCha.domain.board.entity.QHint;
+import project.BBolCha.domain.board.entity.QLike;
+import project.BBolCha.domain.board.entity.QTag;
+import project.BBolCha.domain.user.entity.QUser;
 
 import javax.persistence.EntityManager;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static project.BBolCha.domain.board.entity.QBoard.*;
 import static project.BBolCha.domain.board.entity.QHint.*;
-import static project.BBolCha.domain.board.entity.QLike.*;
 import static project.BBolCha.domain.board.entity.QTag.*;
 import static project.BBolCha.domain.user.entity.QUser.*;
 

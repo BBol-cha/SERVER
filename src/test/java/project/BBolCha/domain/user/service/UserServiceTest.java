@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static project.BBolCha.global.model.Result.NOT_CREATED_USER;
 import static project.BBolCha.global.model.Result.PASSWORD_NOT_MATCHED;
 
 @SpringBootTest
@@ -88,6 +89,20 @@ class UserServiceTest {
 
         assertThat(targetCookie.getValue()).isEqualTo(refreshTokenValue);
         assertThat(targetCookie.isHttpOnly()).isTrue();
+    }
+
+    @DisplayName("사용자가 회원가입을 할때 같은 이메일 유저가 있으면 CustomException 이 발생한다.")
+    @Test
+    void registerNewUserException() {
+        // given
+        User user = saveAndRetrieveUser();
+        HttpServletResponse response = new MockHttpServletResponse();
+        UserRequest.Registration request = new UserRequest.Registration("테스트 계정2", "test@test.com", "abc123!");
+
+        // when & then
+        assertThatThrownBy(() -> userService.registerNewUser(request.toServiceRequest(), response))
+                .isInstanceOf(CustomException.class)
+                .extracting("result").isEqualTo(NOT_CREATED_USER);
     }
 
     @DisplayName("유저가 로그인을 해서 토큰을 발급받는다.")
@@ -204,12 +219,12 @@ class UserServiceTest {
 
 
         // when
-        UserResponse.Detail response = userService.update(request,user);
+        UserResponse.Detail response = userService.update(request, user);
 
         // then
         assertThat(response)
-                .extracting("name","profileImageUrl","email")
-                .contains("테스트 업데이트 계정","update_test_image.png","test@test.com");
+                .extracting("name", "profileImageUrl", "email")
+                .contains("테스트 업데이트 계정", "update_test_image.png", "test@test.com");
     }
 
     private User saveAndRetrieveUser() {

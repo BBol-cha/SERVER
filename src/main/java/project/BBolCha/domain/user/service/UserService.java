@@ -77,6 +77,8 @@ public class UserService {
 
     @Transactional
     public UserResponse.Login registerNewUser(UserServiceRequest.Registration request, HttpServletResponse response) {
+        boolean existsByEmail = userRepository.existsByEmail(request.getEmail());
+        if (existsByEmail) throw new CustomException(Result.NOT_CREATED_USER);
 
         User user = userRepository.save(
                 User.builder()
