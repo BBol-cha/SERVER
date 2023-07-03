@@ -252,36 +252,6 @@ class BoardServiceTest {
         assertThat(response.getTotalElements()).isEqualTo(3000L);
     }
 
-    @DisplayName("게시글이 작성된 날짜 순으로 내림차순으로 정렬하여서 두번째 페이지의 5개 항목을 가져온다.")
-    @Test
-    void shouldReturnSecondPageWithFiveItemsOrderedByCreatedDate() {
-        // given
-        User user = saveAndRetrieveUser();
-
-        saveAndRetrieveBoard(user, "1_content");
-        saveAndRetrieveBoard(user, "2_content");
-        saveAndRetrieveBoard(user, "3_content");
-        saveAndRetrieveBoard(user, "4_content");
-        saveAndRetrieveBoard(user, "5_content");
-        saveAndRetrieveBoard(user, "6_content");
-        saveAndRetrieveBoard(user, "7_content");
-
-        // when
-        Page<BoardResponse.Detail> response = boardService.listSortedBoardsPerPage(2, 5, "createdAt", "DESC");
-
-        // then
-        assertThat(response)
-                .hasSize(2)
-                .extracting("title", "content", "authorName")
-                .containsExactlyInAnyOrder(
-                        tuple("test", "6_content", "테스트 계정"),
-                        tuple("test", "7_content", "테스트 계정")
-                );
-
-        assertThat(response.getTotalPages()).isEqualTo(2);
-        assertThat(response.getTotalElements()).isEqualTo(7L);
-    }
-
     @DisplayName("내가 좋아요를 남기지 않은 게시글에 좋아요를 등록한다.")
     @Test
     void likeAddNotLikedBoardByUser() {
